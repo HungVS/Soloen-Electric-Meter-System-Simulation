@@ -1,0 +1,19 @@
+{
+  "name": "soloen-electric-meter-system-simulation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoderandGymnast/Soloen-Electric-Meter-System-Simulation.git"
+  },
+  "author": "Soloen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CoderandGymnast/Soloen-Electric-Meter-System-Simulation/issues"
+  },
+  "homepage": "https://github.com/CoderandGymnast/Soloen-Electric-Meter-System-Simulation#readme"
+}
