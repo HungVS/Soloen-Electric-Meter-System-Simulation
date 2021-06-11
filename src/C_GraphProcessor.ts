@@ -1,13 +1,13 @@
 import {Graph} from './graph/Graph'
 
-function UpdateGraph  ()  {
+function updateGraph  ()  {
 
 }
 
-function GetGraph  () {
-
+function getGraph  () {
+    return new Graph
 }
 
-function InspectingGraph  ()  {
+function inspectingGraph  ()  {
     
 }
