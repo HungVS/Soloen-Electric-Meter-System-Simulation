@@ -1,4 +1,4 @@
-export class vertex {
-    public idNode: number|null = null; 
-    public adjencyVerticesList:[vertex]| null = null;
+export class Vertex {
+    public id: number|null = null; 
+    public adjencyVerticesList:[Vertex]| null = null;
   }

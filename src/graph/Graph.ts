@@ -1,11 +1,11 @@
-import {vertex} from "./vertex/E_vertex"
+import {Vertex } from "./vertex/E_vertex"
 
-export class graph{
+export class Graph{
     public adjencyList:[ {
-        vertex: vertex,
+        vertex: Vertex,
         adjencyVertices:[{
-            vertex : vertex,
-            weight: null
+            vertex : Vertex,
+            weight: number|null
         }]
     }]| null = null;
 }
