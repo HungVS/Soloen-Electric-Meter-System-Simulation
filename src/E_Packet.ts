@@ -1,4 +1,6 @@
 export class E_Packet {
-  readonly data: string; 
+  readonly levelIDStarting: string;
+  readonly levelIDDestination: string;
+  readonly data: string;
   readonly routing: string;
 }
