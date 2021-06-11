@@ -390,3 +390,7 @@ dist/**/*
 
 # ignore yarn.lock
 yarn.lock
+
+dist
+
+.vscode
