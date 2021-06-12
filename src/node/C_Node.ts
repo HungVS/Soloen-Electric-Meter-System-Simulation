@@ -1,9 +1,10 @@
-import { E_Packet } from "../E_Packet";
+import { Packet } from "../Packet";
+import E_Packet = Packet.E_Packet;
+import E_NodeID = Packet.E_NodeID;
+import E_LevelID = Packet.E_LevelID;
 
 export class C_Node {
   private readonly id: number;
-  private levelID: string;
-  private adjacencyList: C_Node[];
 
   constructor(id: number) {
     this.id = id;
@@ -17,30 +18,26 @@ export class C_Node {
   onIncommingPacket(packet: E_Packet) {
     console.log(packet);
 
-    const routing = packet.routing.trim();
-    if (routing == "") return;
-    const levelIDList = packet.routing.trim().split(" ");
-
+		const routing = packet.routing;
+		if(!routing.length) return;
     const packets: E_Packet[] = [];
-    const nextLevel = String(
-      parseInt(packet.levelIDDestination.split(".")[0]) + 1
-    );
+    const nextLevel = packet.destinationNodeID.levelID.level + 1;
 
-    let constructingLevelIDList: string[] = [];
+    let constructingRouting: E_NodeID[] = []; /** The routing is being constructed */
 
     let count = 0;
-    levelIDList.forEach((levelID) => {
-      const level = levelID.split(".")[0];
+    routing.forEach(nodeID => {
+      const level = nodeID.levelID.level
       if (level != nextLevel || ++count == 1)
-        constructingLevelIDList.push(levelID);
+        constructingRouting.push(nodeID);
       else {
-				this.addPacket(packets, packet, constructingLevelIDList)
-				constructingLevelIDList = [levelID];
+				this.addPacket(packets, packet, constructingRouting)
+				constructingRouting = [nodeID];
       }
     });
 
-		this.addPacket(packets, packet, constructingLevelIDList)
-    constructingLevelIDList = [];
+		this.addPacket(packets, packet, constructingRouting)
+    constructingRouting = [];
 
    this.sendMany(packets)
   }
@@ -51,14 +48,7 @@ export class C_Node {
 	 */
 	private sendMany(packets: E_Packet[]) {
 		packets.forEach((packet) => {
-      const levelIDDestination = packet.levelIDDestination;
-      for (let i = 0; i < this.adjacencyList.length; i++) {
-        const nextNode = this.adjacencyList[i];
-        if (nextNode.levelID == levelIDDestination) {
-          this.sendTo(nextNode, packet);
-          break;
-        }
-      }
+      this.sendTo(packet.destinationNodeID.node, packet)
     });
 	}
 
@@ -66,20 +56,18 @@ export class C_Node {
 	 * Add new packet to the packet list which will be sent to the next level nodes.
 	 * @param packets The packet list
 	 * @param incommingPacket The received packet.
-	 * @param constructingLevelIDList The constructing level ID list.
+	 * @param constructingRouting The constructing routing.
 	 */
   private addPacket(
     packets: E_Packet[],
     incommingPacket: E_Packet,
-    constructingLevelIDList: string[]
+    constructingRouting: E_NodeID[]
   ) {
     packets.push({
-      levelIDStarting: incommingPacket.levelIDDestination,
-      levelIDDestination: constructingLevelIDList[0],
+      startingNodeID: incommingPacket.destinationNodeID,
+      destinationNodeID: constructingRouting[0],
       data: incommingPacket.data,
-      routing: constructingLevelIDList
-        .slice(1, constructingLevelIDList.length)
-        .join(" "),
+      routing: constructingRouting.slice(1, constructingRouting.length)
     });
   }
 
@@ -92,19 +80,7 @@ export class C_Node {
     node.onIncommingPacket(packet);
   }
 
-  setAdjacencyList(adjacencyList: C_Node[]) {
-    this.adjacencyList = adjacencyList;
-  }
-
   getID() {
     return this.id;
-  }
-
-  setLevelID(id: string) {
-    this.levelID = id;
-  }
-
-  getLevelID() {
-    return this.levelID;
   }
 }
