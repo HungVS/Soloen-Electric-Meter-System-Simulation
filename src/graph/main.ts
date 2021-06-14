@@ -20,4 +20,7 @@ import {C_GraphProcessor} from './C_GraphProcessor'
     vertexlist[5].addVertexAdjency([vertexlist[0],vertexlist[4]])
 
     processor.initializeGraph(graph,vertexlist,weight)
+
+
+    processor.getGraph(graph)
 })()
