@@ -5,13 +5,13 @@ export class C_GraphProcessor {
     
  initializeGraph (graph: Graph, vertexlist: Vertex[],weight: number[]) {
     let tempadjencyList:IadjencyList[] = [];
-    let weight_index = 0
+    let weightIndex = 0
     for (let i = 0; i < vertexlist.length; i++ ){
         let tempVertex = vertexlist[i]
         let tempadjencyVertices = []
         for (let j = 0; j < vertexlist[i].adjencyVerticesList.length; j++){ 
-            tempadjencyVertices.push({vertex :vertexlist[i].adjencyVerticesList[j], weight: weight[weight_index]})
-            weight_index += 1;
+            tempadjencyVertices.push({vertex :vertexlist[i].adjencyVerticesList[j], weight: weight[weightIndex]})
+            weightIndex += 1;
         }
         tempadjencyList.push ({vertexRoot:tempVertex, adjencyVertices:tempadjencyVertices})
     }
