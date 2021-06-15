@@ -23,5 +23,5 @@ import {A_dijkstra} from './A_shortest_path/dijktra'
     processor.initializeGraph(graph,vertexlist,weight)
     processor.getGraph(graph)
     dijktra.findShortestPath(graph,0)
-    //dijktra.displaySolution(graph,0)
+    dijktra.displaySolution(graph)
 })()
