@@ -2,11 +2,13 @@ import {Vertex} from './vertex/E_vertex'
 import {Graph} from './Graph'
 import {C_GraphProcessor} from './C_GraphProcessor'
 import {A_dijkstra} from './A_shortest_path/dijktra'
+import { A_aStrar } from './A_shortest_path/aStar'
 
 (() => {
     const processor : C_GraphProcessor = new C_GraphProcessor()
     const graph : Graph = new Graph ()
     const dijktra : A_dijkstra = new A_dijkstra()
+    const a_star : A_aStrar = new A_aStrar ()
     const numberVertex = 6
     const vertexlist : Vertex[] =  []
     const weight : number []= [4,3,20, 4,2, 2,20, 3,20,5, 5,1, 20,1]
@@ -24,4 +26,6 @@ import {A_dijkstra} from './A_shortest_path/dijktra'
     processor.getGraph(graph)
     dijktra.findShortestPath(graph,0)
     dijktra.displaySolution(graph)
+    a_star.findShortestPath(graph,0,2)
+    a_star.displaySolution()
 })()

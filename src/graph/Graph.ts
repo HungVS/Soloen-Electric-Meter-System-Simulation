@@ -17,5 +17,14 @@ export class Graph{
           // }
       }
       return  vertexNumber;
-  }  
+    }  
+  
+    resetGraph () {
+        for (let i = 0; i < this.adjencyList.length;i ++){
+            this.adjencyList[i].vertexRoot.fScore = 0;
+            this.adjencyList[i].vertexRoot.gScore = 0;
+            this.adjencyList[i].vertexRoot.hScore = 0;
+            this.adjencyList[i].vertexRoot.previous = null;
+        }
+    }
 }
