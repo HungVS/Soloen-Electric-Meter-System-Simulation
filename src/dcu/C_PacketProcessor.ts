@@ -6,7 +6,8 @@ export class C_PacketProcessor extends C_Node {
   /**
    * Propagate packet to the entire network.
    */
-  propagate(packet: E_Packet) {
-    this.onIncommingPacket(packet);
+  async propagate(packet: E_Packet): Promise<number[]> {
+    const timeoutNodeList = await this.onIncommingPacket(packet);
+    return timeoutNodeList;
   }
 }
