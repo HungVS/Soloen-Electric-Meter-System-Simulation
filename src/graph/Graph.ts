@@ -1,11 +1,17 @@
 import {Vertex } from "./vertex/E_vertex"
 import {IadjencyList} from './decorator'
 export class Graph{
+    public Alone_vertex : Vertex[];
     public adjencyList:IadjencyList[] | null = null;
     constructor() {
 
       }
-    setAdjacencyList ( adjencyVertices: IadjencyList[]){
+    
+      setAloneList(arr :Vertex[]){
+          this.Alone_vertex = arr
+      }
+
+      setAdjacencyList ( adjencyVertices: IadjencyList[]){
         this.adjencyList= adjencyVertices
     }
 

@@ -26,7 +26,7 @@ import { A_aStrar } from '../C_router/A_shortest_path/aStar'
 
     processor.initializeGraph(graph,vertexlist,weight)
     processor.getGraph(graph)
-    processor.updateGraph(graph,12,12,1)
+    processor.updateGraph(graph,9,9,1)
 
     // console.log( vertexlist[8])
     // dijktra.findShortestPath(graph,0)
