@@ -8,3 +8,9 @@ export interface IadjencyList {
     vertexRoot:Vertex,
     adjencyVertices : IadjencyVertices []
 }
+
+export interface IroutingPacket {
+    
+        node : number,
+        levelID: { level: number, id: number}
+}

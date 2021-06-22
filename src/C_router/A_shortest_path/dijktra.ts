@@ -1,11 +1,11 @@
-import {Graph} from '../Graph'
-import {Vertex} from '../vertex/E_vertex'
-
+import {Graph} from '../../graph/Graph'
+import {Vertex} from '../../graph/vertex/E_vertex'
+import {IroutingPacket} from '../../graph/decorator'
 const INF : number = 999
-let source : number = 0
+//let source : number = 0
 export class A_dijkstra {
     public visited : boolean[] ;
-    //public src: number|0 ;
+    public source: number|0 ;
     public graph: Graph;
     public dist : number [];
     public previous : number [];
@@ -13,7 +13,7 @@ export class A_dijkstra {
         this.graph = graph
       }
     findShortestPath(graph: Graph,scr: number) {
-       source = scr
+       this.source = scr
     //    console.log(source)
        this.init(graph,scr)
     //    console.log(this.visited)
@@ -44,12 +44,12 @@ export class A_dijkstra {
             process.stdout.write( +i+"\t\t\t "+this.dist[i]+"\t\t\t"+" ")
             process.stdout.write(" " +i+" ")
             let parnode = this.previous[i];
-            while ( parnode != source ){
+            while ( parnode != this.source ){
                 process.stdout.write(" <--" + parnode +" ");
                 parnode = this.previous[parnode];
             }
-            if (i != source) {
-                process.stdout.write(' <--'+source)
+            if (i != this.source) {
+                process.stdout.write(' <--'+this.source)
             }
             console.log('\n');
         }
@@ -66,6 +66,41 @@ export class A_dijkstra {
             }
         }
      return minnode ;
+    }
+
+    setLevel(){
+        console.log(this.previous)
+        let routing :IroutingPacket[] = []
+        let counts = {};
+        for (let i = 0; i < this.previous.length; i++) {
+            counts[this.previous[i]] = 1 + (counts[this.previous[i]] || 0);
+        }
+        let sourceRoot = {
+            node : this.source,
+            levelID: { level: 0, id: 1}
+        }
+        routing.push(sourceRoot)
+        console.log(counts)
+        let level = 0;
+        while (level < Object.keys(counts).length){
+            let index = 0;
+        for (let i = 0; i <routing.length; i++){
+            if(routing[i].levelID.level == level){
+                    for (let j = 0; j <this.previous.length; j++){
+                        if(routing[i].node == this.previous[j] && j != this.source){
+                            let rout = {
+                                node : j,
+                                levelID: { level: level +1, id: ++index}
+                            }
+                            routing.push(rout)
+                        }
+                    }
+            }
+        }
+            level ++;
+        }
+        console.log(routing)
+        return routing;
     }
 
     init (graph: Graph,scr: number) {
