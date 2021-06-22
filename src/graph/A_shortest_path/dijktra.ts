@@ -29,7 +29,7 @@ export class A_dijkstra {
 
                     this.dist[IdVertex] = this.dist[nearest] + graph.adjencyList[nearest].adjencyVertices[j].weight
                     this.previous[IdVertex] = nearest;
-                    // console.log(" Parent :" + this.previous)
+                     console.log(" Parent :" + this.previous)
                     // console.log(" Distance :" + this.dist)
                 }
             }
@@ -81,5 +81,9 @@ export class A_dijkstra {
         this.visited = temp
         this.dist = tempDist
         this.previous = tempPar
+    }
+
+    setLevel () {
+        
     }
 }

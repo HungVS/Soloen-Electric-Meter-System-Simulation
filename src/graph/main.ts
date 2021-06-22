@@ -26,6 +26,6 @@ import { A_aStrar } from './A_shortest_path/aStar'
     processor.getGraph(graph)
     dijktra.findShortestPath(graph,0)
     dijktra.displaySolution(graph)
-    a_star.findShortestPath(graph,0,2)
+    a_star.findShortestPath(graph,0,5)
     a_star.displaySolution()
 })()

@@ -105,6 +105,7 @@ export class A_aStrar {
         var d = this.dist ( A_Point.x,A_Point.y, B_Point.x,B_Point.y)
         return 1
     }
+    
     dist (ax: number,ay: number, bx: number,by: number): number {
         const dist = Math.sqrt (Math.pow(ax-bx,2) + Math.pow(ay-by,2) )
         return dist
