@@ -12,8 +12,6 @@ export class C_GraphProcessor {
         let tempadjencyVertices = []
         try {
             if(!vertexlist[i].adjencyVerticesList){
-                //tempadjencyList.push ({vertexRoot:tempVertex, adjencyVertices:tempadjencyVertices})
-                console.log('Alone Vertex  :' + i )
                 tempAloneVertex.push(tempVertex)
             }
             for (let j = 0; j < vertexlist[i].adjencyVerticesList.length; j++){ 
@@ -22,18 +20,15 @@ export class C_GraphProcessor {
             }
             tempadjencyList.push ({vertexRoot:tempVertex, adjencyVertices:tempadjencyVertices})
         } catch (e) {
-           // console.log('Exist vertex does not adjent any vertex')
         }
 
     }
     graph.setAloneList(tempAloneVertex)
     graph.setAdjacencyList(tempadjencyList)
-    //console.log(graph.adjencyList)
 };
 
 
  updateGraph  (graph: Graph,start: number,end: number, weight: number)  {
-    //console.log('start' + start + '  ,end : ' + end)
     if(start == end) return
 
     const vertices = []
@@ -54,7 +49,6 @@ export class C_GraphProcessor {
 }
 
  getGraph  (graph: Graph) {
-    console.log('Tracking graph :')
     for (let i = 0; i < graph.adjencyList.length; i++ ){
         console.log('Root of adjacency list :')
         console.log( graph.adjencyList[i].vertexRoot.id +' <---{')

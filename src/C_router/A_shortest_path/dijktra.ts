@@ -1,8 +1,6 @@
 import {Graph} from '../../graph/Graph'
-import {Vertex} from '../../graph/vertex/E_vertex'
 import {IroutingPacket} from '../../graph/decorator'
 const INF : number = 999
-//let source : number = 0
 export class A_dijkstra {
     public visited : boolean[] ;
     public source: number|0 ;
@@ -14,11 +12,7 @@ export class A_dijkstra {
       }
     findShortestPath(graph: Graph,scr: number) {
        this.source = scr
-    //    console.log(source)
        this.init(graph,scr)
-    //    console.log(this.visited)
-    //    console.log(this.previous)
-    //    console.log(this.dist)
 
        for (let i = 0; i < graph.adjencyList.length;i ++){
         let nearest = this.getNearest(graph)
@@ -29,8 +23,6 @@ export class A_dijkstra {
 
                     this.dist[IdVertex] = this.dist[nearest] + graph.adjencyList[nearest].adjencyVertices[j].weight
                     this.previous[IdVertex] = nearest;
-                    // console.log(" Parent :" + this.previous)
-                    // console.log(" Distance :" + this.dist)
                 }
             }
        } 
@@ -69,7 +61,6 @@ export class A_dijkstra {
     }
 
     setLevel(){
-        console.log(this.previous)
         let routing :IroutingPacket[] = []
         let counts = {};
         for (let i = 0; i < this.previous.length; i++) {
@@ -80,7 +71,6 @@ export class A_dijkstra {
             levelID: { level: 0, id: 1}
         }
         routing.push(sourceRoot)
-        console.log(counts)
         let level = 0;
         while (level < Object.keys(counts).length){
             let index = 0;
@@ -99,7 +89,6 @@ export class A_dijkstra {
         }
             level ++;
         }
-        console.log(routing)
         return routing;
     }
 

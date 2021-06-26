@@ -24,43 +24,28 @@ export class A_aStrar {
          if (this.openSet.length > 0) {
             while (this.openSet.length > 0 ) {
                 //keep going
-                //console.log('Open Set Length :'  + this.openSet.length)
                 let  lowest = 0;
                 for (let i = 0 ; i< this.openSet.length ; i++) {
                     if(this.openSet[i].fScore < this.openSet[lowest].fScore){
                         lowest = i;
                     }
-                   // console.log (this.openSet[i])
                 }
                 let  current = this.openSet[lowest]
-                //console.log('current Id : ' + current.id)
                 if (current == endVertex){
                     //Find the path
                     var temp = current
-                    //tempPath.push(temp)
-                    //this.path.push(temp)
                     while (temp.previous)
                     {
-                        //this.path.push(temp)
                         tempPath.push(temp)
                         temp = temp.previous
                     }
                     this.path = tempPath
                     console.log( 'DONE !!!')
-                    // console.log( ' The path is :')
-                    // console.log(this.path)
-                    // console.log( '================End Path=============')
                     break;
                 }
                 this.removeFromArray(this.openSet, current)
-                // console.log( 'Open Set------------------------')
-                // console.log(this.openSet)
-                // console.log( 'End Open Set------------------------')
                 tempClosedSet.push(current)
                 this.closedSet = tempClosedSet
-                // console.log( 'Closed Set------------------------')
-                // console.log(this.closedSet)
-                // console.log( 'End closed Set------------------------')
                 var neighbors = current.adjencyVerticesList
                 for (var i = 0; i < neighbors.length; i++) {
                     var neighbor = neighbors[i]
