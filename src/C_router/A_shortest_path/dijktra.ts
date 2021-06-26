@@ -47,6 +47,7 @@ export class A_dijkstra {
         }
         console.log ('============================================');
         console.log('\n')
+        console.log('The previous ' + this.previous)
     }
     getNearest(graph: Graph) : number{
         let minval = INF;
@@ -60,36 +61,85 @@ export class A_dijkstra {
      return minnode ;
     }
 
+    DFS(v : number){
+        let marked : boolean[] = []
+        let visit : number[] = []
+        let stack : number[] = []
+        marked.length = this.previous.length
+        for (let i = 0; i < marked.length; i++){
+            marked[i] = false
+        }
+        stack.push(v)
+        while (stack.length > 0) {
+            v = stack.pop()
+            if (marked[v] == false){
+                visit.push(v)
+                marked[v] = true
+                for (let i = 0; i < this.previous.length; i++){
+                    if (this.previous[i] == v){
+                        stack.push(i)
+                    }
+                }
+            }
+        }
+        return visit
+    }
     setLevel(){
         let routing :IroutingPacket[] = []
-        let counts = {};
-        for (let i = 0; i < this.previous.length; i++) {
-            counts[this.previous[i]] = 1 + (counts[this.previous[i]] || 0);
-        }
         let sourceRoot = {
             node : this.source,
             levelID: { level: 0, id: 1}
         }
-        routing.push(sourceRoot)
-        let level = 0;
-        while (level < Object.keys(counts).length){
-            let index = 0;
-        for (let i = 0; i <routing.length; i++){
-            if(routing[i].levelID.level == level){
-                    for (let j = 0; j <this.previous.length; j++){
-                        if(routing[i].node == this.previous[j] && j != this.source){
-                            let rout = {
-                                node : j,
-                                levelID: { level: level +1, id: ++index}
-                            }
-                            routing.push(rout)
-                        }
-                    }
-            }
+        let v = this.source
+        let marked : boolean[] = []
+        let visit : number[] = []
+        let stack : number[] = []
+        marked.length = this.previous.length
+        for (let i = 0; i < marked.length; i++){
+            marked[i] = false
         }
+        stack.push(v)
+        let level = 0;
+        routing.push(sourceRoot)
+        while (stack.length > 0) {
+            let index = 0;
+            v = stack.pop()
+            if (marked[v] == false){
+                for (let i = 0; i <routing.length; i++){
+                    if(routing[i].levelID.level == level){
+                            for (let j = 0; j <this.previous.length; j++){
+                                if(routing[i].node == this.previous[j] && j != this.source){
+                                    let rout = {
+                                        node : j,
+                                        levelID: { level: level +1, id: ++index}
+                                    }
+                                    routing.push(rout)
+                                }
+                            }
+                    }
+                }
+                visit.push(v)
+                marked[v] = true
+                for (let i = 0; i < this.previous.length; i++){
+                    if (this.previous[i] == v){
+                        stack.push(i)
+                    }
+                }
+            }
             level ++;
         }
-        return routing;
+        return this.sort_routing(routing,visit);
+    }
+    sort_routing (routing :IroutingPacket[], visit : number[]){
+        let routing_sort :IroutingPacket[] = []
+        for (let i = 0; i < routing.length ;i ++) {
+            for (let j = 0; j < routing.length; j++) {
+                if (visit[i]  == routing[j].node){
+                    routing_sort.push(routing[j])
+                }
+            }
+        }
+        return routing_sort 
     }
 
     init (graph: Graph,scr: number) {
