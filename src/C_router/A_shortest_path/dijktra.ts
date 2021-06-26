@@ -1,11 +1,9 @@
-import {Graph} from '../Graph'
-import {Vertex} from '../vertex/E_vertex'
-
+import {Graph} from '../../graph/Graph'
+import {IroutingPacket} from '../../graph/decorator'
 const INF : number = 999
-let source : number = 0
 export class A_dijkstra {
     public visited : boolean[] ;
-    //public src: number|0 ;
+    public source: number|0 ;
     public graph: Graph;
     public dist : number [];
     public previous : number [];
@@ -13,12 +11,8 @@ export class A_dijkstra {
         this.graph = graph
       }
     findShortestPath(graph: Graph,scr: number) {
-       source = scr
-    //    console.log(source)
+       this.source = scr
        this.init(graph,scr)
-    //    console.log(this.visited)
-    //    console.log(this.previous)
-    //    console.log(this.dist)
 
        for (let i = 0; i < graph.adjencyList.length;i ++){
         let nearest = this.getNearest(graph)
@@ -29,8 +23,6 @@ export class A_dijkstra {
 
                     this.dist[IdVertex] = this.dist[nearest] + graph.adjencyList[nearest].adjencyVertices[j].weight
                     this.previous[IdVertex] = nearest;
-                    // console.log(" Parent :" + this.previous)
-                    // console.log(" Distance :" + this.dist)
                 }
             }
        } 
@@ -44,12 +36,12 @@ export class A_dijkstra {
             process.stdout.write( +i+"\t\t\t "+this.dist[i]+"\t\t\t"+" ")
             process.stdout.write(" " +i+" ")
             let parnode = this.previous[i];
-            while ( parnode != source ){
+            while ( parnode != this.source ){
                 process.stdout.write(" <--" + parnode +" ");
                 parnode = this.previous[parnode];
             }
-            if (i != source) {
-                process.stdout.write(' <--'+source)
+            if (i != this.source) {
+                process.stdout.write(' <--'+this.source)
             }
             console.log('\n');
         }
@@ -66,6 +58,38 @@ export class A_dijkstra {
             }
         }
      return minnode ;
+    }
+
+    setLevel(){
+        let routing :IroutingPacket[] = []
+        let counts = {};
+        for (let i = 0; i < this.previous.length; i++) {
+            counts[this.previous[i]] = 1 + (counts[this.previous[i]] || 0);
+        }
+        let sourceRoot = {
+            node : this.source,
+            levelID: { level: 0, id: 1}
+        }
+        routing.push(sourceRoot)
+        let level = 0;
+        while (level < Object.keys(counts).length){
+            let index = 0;
+        for (let i = 0; i <routing.length; i++){
+            if(routing[i].levelID.level == level){
+                    for (let j = 0; j <this.previous.length; j++){
+                        if(routing[i].node == this.previous[j] && j != this.source){
+                            let rout = {
+                                node : j,
+                                levelID: { level: level +1, id: ++index}
+                            }
+                            routing.push(rout)
+                        }
+                    }
+            }
+        }
+            level ++;
+        }
+        return routing;
     }
 
     init (graph: Graph,scr: number) {
