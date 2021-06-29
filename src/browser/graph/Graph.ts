@@ -1,7 +1,9 @@
-import {Vertex } from "./vertex/E_vertex"
-import {IadjencyList} from './decorator'
+import {Vertex } from "./E_vertex"
+import { Decorator} from './decorator'
+// import {IadjencyList} from './decorator'
+import IadjencyList = Decorator.IadjencyList;
 export class Graph{
-    public Alone_vertex : Vertex[];
+    public Alone_vertex!: Vertex[];
     public adjencyList:IadjencyList[] | null = null;
     constructor() {
 

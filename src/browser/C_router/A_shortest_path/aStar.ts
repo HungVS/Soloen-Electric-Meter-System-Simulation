@@ -1,5 +1,5 @@
 import {Graph} from '../../graph/Graph'
-import {Vertex} from '../../graph/vertex/E_vertex'
+import {Vertex} from '../../graph/E_vertex'
 
 
 export class A_aStrar {

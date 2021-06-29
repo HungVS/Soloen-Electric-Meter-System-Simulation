@@ -1,5 +1,6 @@
 import {Graph} from '../../graph/Graph'
-import {IroutingPacket} from '../../graph/decorator'
+import { Decorator} from '../../graph/decorator'
+import IroutingPacket = Decorator.IroutingPacket
 const INF : number = 999
 export class A_dijkstra {
     public visited : boolean[] ;

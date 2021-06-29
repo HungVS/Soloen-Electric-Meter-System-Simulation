@@ -1,6 +1,7 @@
 import {Graph} from './Graph'
-import {Vertex} from './vertex/E_vertex'
-import {IadjencyList} from './decorator'
+import {Vertex} from './E_vertex'
+import {Decorator} from './decorator';
+import IadjencyList = Decorator.IadjencyList;
 export class C_GraphProcessor {
     
  initializeGraph (graph: Graph, vertexlist: Vertex[],weight: number[]) {

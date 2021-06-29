@@ -1,5 +1,5 @@
-import { Vertex } from "./graph/vertex/E_vertex";
 import { Graph } from "./graph/Graph";
+import { Vertex } from "./graph/E_vertex";
 import { C_GraphProcessor } from "./graph/C_GraphProcessor";
 import { A_dijkstra } from "./C_router/A_shortest_path/dijktra";
 import { A_aStrar } from "./C_router/A_shortest_path/aStar";
