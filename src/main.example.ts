@@ -15,7 +15,7 @@ import E_Packet = Packet.E_Packet;
   const graph: Graph = new Graph();
   const dijktra: A_dijkstra = new A_dijkstra();
   const a_star: A_aStrar = new A_aStrar();
-  const numVertices = 10;
+  const numVertices = 8;
   const vertexlist: Vertex[] = [];
   const weight: number[] = [
     4, 3, 20, 1, 4, 2, 2, 20, 3, 20, 5, 5, 1, 20, 1, 99, 99, 1,
@@ -38,9 +38,10 @@ import E_Packet = Packet.E_Packet;
   vertexlist[7].addVertexAdjency([vertexlist[0]]);
 
   processor.initializeGraph(graph, vertexlist, weight);
-  processor.updateGraph(graph, 9, 9, 1);
-
+  // processor.updateGraph(graph, 9, 9, 1);
+  processor.getGraph(graph)
   dijktra.findShortestPath(graph, 0);
+  dijktra.displaySolution(graph)
   const levels = dijktra.setLevel();
   console.log(levels)
 
@@ -50,13 +51,15 @@ import E_Packet = Packet.E_Packet;
   const dcu: C_DCU = new C_DCU(rootNode);
 
   const childNodeList: C_Node[] = [];
-  const numChildNodes = numVertices;
+  const numChildNodes = numVertices-1;
 
   for (let i = 1; i <= numChildNodes; i++) {
-    if (offlineList.includes(i))
-      childNodeList.push(new C_Node(i, Status.OFFLINE));
-    else childNodeList.push(new C_Node(i, Status.ONLINE));
+    // if (offlineList.includes(i))
+    //   childNodeList.push(new C_Node(i, Status.OFFLINE));
+    // else
+     childNodeList.push(new C_Node(i, Status.ONLINE));
   }
+  console.log(childNodeList)
 
   /** III. Construct packet: */
   const packet: E_Packet = {
@@ -65,14 +68,23 @@ import E_Packet = Packet.E_Packet;
     routing: [],
   };
 
-  for (let i = 1; i < levels.length; i++) {
+  for (let i = 1; i <= levels.length -1; i++) {
+    console.log(levels[i].node)
+    console.log('-------------')
+    // console.log(childNodeList[levels[i].node].getID())
+    console.log(i)
     packet.routing.push({
-      node: childNodeList[levels[i].node],
+      node: childNodeList[levels[i].node-1],
       levelID: levels[i].levelID,
     });
   }
-
+  console.log('---------Starting propagate-----')
   const timeoutNodeList = await dcu.getPacketProcessor().propagate(packet);
-  console.log("Timeout list: ");
-  console.log(timeoutNodeList);
+  if (timeoutNodeList.length == 0) {
+    console.log('[TRACKING]:  Propagate Completed !!!')
+  } else {
+    console.log("Timeout list: ");
+    const timeout : number[] = [];
+    console.log(timeoutNodeList);
+  }
 })();

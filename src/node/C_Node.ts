@@ -31,6 +31,7 @@ export class C_Node {
    * @return            Status.
    */
   async onIncommingPacket(packet: E_Packet): Promise<number[]> {
+    console.log(packet);
     if (this.status == Status.OFFLINE) {
       await this.delay(4000);
       return [];

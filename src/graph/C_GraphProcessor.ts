@@ -5,6 +5,32 @@ import IadjencyList = Decorator.IadjencyList;
 export class C_GraphProcessor {
     
  initializeGraph (graph: Graph, vertexlist: Vertex[],weight: number[]) {
+    console.log(vertexlist)
+    let tempadjencyList:IadjencyList[] = [];
+    let tempAloneVertex : Vertex [] = [];
+    let weightIndex = 0
+    for (let i = 0; i < vertexlist.length; i++ ){
+        let tempVertex = vertexlist[i]
+        let tempadjencyVertices = []
+        try {
+            if(!vertexlist[i].adjencyVerticesList){
+                tempAloneVertex.push(tempVertex)
+            }
+            for (let j = 0; j < vertexlist[i].adjencyVerticesList.length; j++){ 
+                tempadjencyVertices.push({vertex :vertexlist[i].adjencyVerticesList[j], weight: weight[weightIndex]})
+                weightIndex += 1;
+            }
+            tempadjencyList.push ({vertexRoot:tempVertex, adjencyVertices:tempadjencyVertices})
+        } catch (e) {
+        }
+
+    }
+    graph.setAloneList(tempAloneVertex)
+    graph.setAdjacencyList(tempadjencyList)
+};
+
+initializeGraphv2 (graph: Graph, vertexlist: Vertex[],weight: number[]) {
+    console.log(vertexlist)
     let tempadjencyList:IadjencyList[] = [];
     let tempAloneVertex : Vertex [] = [];
     let weightIndex = 0

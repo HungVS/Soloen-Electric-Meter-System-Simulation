@@ -1,7 +1,7 @@
 import {Graph} from '../../graph/Graph'
 import { Decorator} from '../../graph/decorator'
 import IroutingPacket = Decorator.IroutingPacket
-const INF : number = 999
+const INF : number = 9999999
 export class A_dijkstra {
     public visited : boolean[] ;
     public source: number|0 ;
@@ -11,12 +11,12 @@ export class A_dijkstra {
     constructor(graph? : Graph) {
         this.graph = graph
       }
-    findShortestPath(graph: Graph,scr: number) {
+    findShortestPath(graph: Graph,scr: number,IndexNode : number[]) {
        this.source = scr
-       this.init(graph,scr)
+       this.init(graph,scr,IndexNode)
 
        for (let i = 0; i < graph.adjencyList.length;i ++){
-        let nearest = this.getNearest(graph)
+        let nearest = this.getNearest(graph,IndexNode)
         this.visited[nearest] = true;
             for (let j = 0; j <graph.adjencyList[nearest].adjencyVertices.length;j++){
                 const IdVertex: number = graph.adjencyList[nearest].adjencyVertices[j].vertex.id
@@ -27,6 +27,7 @@ export class A_dijkstra {
                 }
             }
        } 
+       console.log('The previous ' + this.previous)
     }
 
     displaySolution (graph: Graph) {
@@ -37,9 +38,19 @@ export class A_dijkstra {
             process.stdout.write( +i+"\t\t\t "+this.dist[i]+"\t\t\t"+" ")
             process.stdout.write(" " +i+" ")
             let parnode = this.previous[i];
+            let count = 0
             while ( parnode != this.source ){
-                process.stdout.write(" <--" + parnode +" ");
-                parnode = this.previous[parnode];
+                // console.log(graph.adjencyList[i].vertexRoot)
+                count++;
+                if(parnode == this.previous[parnode]) {
+                }
+                else {
+                    process.stdout.write(" <--" + parnode +" ");
+                    parnode = this.previous[parnode];
+                }
+                // if (count =>3) {
+                //     break
+                // }
             }
             if (i != this.source) {
                 process.stdout.write(' <--'+this.source)
@@ -50,13 +61,13 @@ export class A_dijkstra {
         console.log('\n')
         console.log('The previous ' + this.previous)
     }
-    getNearest(graph: Graph) : number{
+    getNearest(graph: Graph,IndexNode : number[]) : number{
         let minval = INF;
         let minnode = 0;
         for (let i = 0; i < graph.adjencyList.length; i ++) {
             if (!this.visited[i] && this.dist[i] < minval){
                 minval = this.dist[i];
-                minnode = i;
+                minnode = IndexNode[i];
             }
         }
      return minnode ;
@@ -85,7 +96,32 @@ export class A_dijkstra {
         }
         return visit
     }
+    BFS(v : number){
+        let marked : boolean[] = []
+        let visit : number[] = []
+        let queue : number[] = []
+        marked.length = this.previous.length
+        for (let i = 0; i < marked.length; i++){
+            marked[i] = false
+        }
+        queue .push(v)
+        while (queue.length > 0) {
+            v = queue.shift()
+            if (marked[v] == false){
+                visit.push(v)
+                marked[v] = true
+                for (let i = 0; i < this.previous.length; i++){
+                    if (this.previous[i] == v){
+                        queue.push(i)
+                    }
+                }
+            }
+        }
+        console.log(visit)
+        return visit
+    }
     setLevel(){
+        this.BFS(this.source)
         let routing :IroutingPacket[] = []
         let sourceRoot = {
             node : this.source,
@@ -143,12 +179,12 @@ export class A_dijkstra {
         return routing_sort 
     }
 
-    init (graph: Graph,scr: number) {
+    init (graph: Graph,scr: number,IndexNode : number[]) {
         let temp: boolean [] = []
         let tempDist : number[] = []
         let tempPar : number[] = []
         for (let i = 0; i < graph.adjencyList.length; i++){
-            tempPar.push(i)
+            tempPar.push(IndexNode[i])
             tempDist.push(INF)
             temp.push(false)
         }

@@ -2,18 +2,12 @@ import {Component} from 'react';
 import { Line } from 'react-lineto';
 import './App.css';
 import {Node} from './components/node/node'
-export interface Icoords {
-    id1: string
-    x1: number
-    y1:number
-    id2: string
-    x2: number
-    y2:number
-    distance:number
-}
+import axios from 'axios';
+import { Icoords ,IclientPacket,Iedge,Inode } from './ClientPacket'
+
 export default class App extends Component <any,any>
 {
-  public  listNode: any[];
+  public  listNode: Inode[];
   public  listEdge: Icoords[];
   public listNodeId: any[];
   public dist_constraint : 300
@@ -64,56 +58,106 @@ export default class App extends Component <any,any>
     const dist = Math.sqrt (Math.pow(ax-bx,2) + Math.pow(ay-by,2) )
     return dist
   }
-  updateGraph = () => {
+  updateGraph = (arrNode : Inode []) => {
     this.resetList()
-    for (let i = 0; i < this.listNode.length -1 ; i++){
-      for (let j = this.listNode.length -1; j > i; j--) {
-        let dist  = this.dist(this.listNode[i].x,this.listNode[i].y,this.listNode[j].x,this.listNode[j].y)
+    for (let i = 0; i < arrNode.length -1 ; i++){
+      for (let j = arrNode.length -1; j > i; j--) {
+        let dist  = this.dist(arrNode[i].x,arrNode[i].y,arrNode[j].x,arrNode[j].y)
         let edge : Icoords = {
-          id1 :this.listNode[i].id ,
-          x1: this.listNode[i].x ,
-          y1: this.listNode[i].y,
-          id2 : this.listNode[j].id,
-          x2:this.listNode[j].x,
-          y2:this.listNode[j].y,
+          id1 :arrNode[i].id ,
+          x1: arrNode[i].x ,
+          y1: arrNode[i].y,
+          id2 : arrNode[j].id,
+          x2:arrNode[j].x,
+          y2:arrNode[j].y,
           distance :dist
         } 
         if(edge.x1 !== undefined && edge.y1 !== undefined && edge.x2 !== undefined && edge.y2 !== undefined) {
-          if(this.dist(edge.x1,edge.y1,edge.x2,edge.y2) <= 300){
+          if(this.dist(edge.x1,edge.y1,edge.x2,edge.y2) <= 200){
             this.listEdge.push(edge)
-            console.log('i' + i, 'j' + j)
+            // console.log('i' + i, 'j' + j)
           }
         }
       }
     }
-    this.setState({ edges: this.listEdge })
+
   }
-  getAdjencyList() {
-    let adjentMatrix = []
-    for (let i = 0; i < this.state.listNode.length;i++ ) {
+  getAdjencyList( connectNode : Inode[]) {
+    let adjentMatrix :IclientPacket [] = []
+    for (let i = 0; i < connectNode.length;i++ ) {
       let adjentlist = []
       for (let j = 0; j < this.listEdge.length;j ++) {
-        if (this.state.listNode[i].id === this.listEdge[j].id1 ) {
-
-          adjentlist.push({id : this.listNodeId.indexOf(this.listEdge[j].id2), dist : this.listEdge[j].distance})
+        if (connectNode[i].id === this.listEdge[j].id1 ) {
+          let edge : Iedge = {vertex_id : this.listNodeId.indexOf(this.listEdge[j].id2), dist : this.listEdge[j].distance}
+          adjentlist.push(edge)
         }
-        else if (this.state.listNode[i].id === this.listEdge[j].id2) {
-          adjentlist.push({id : this.listNodeId.indexOf(this.listEdge[j].id1), dist : this.listEdge[j].distance})
+        else if (connectNode[i].id === this.listEdge[j].id2) {
+          let edge : Iedge =  { vertex_id : this.listNodeId.indexOf(this.listEdge[j].id1), dist : this.listEdge[j].distance}
+          adjentlist.push(edge)
         }
       }
-      adjentMatrix.push({vertexRoot : i ,adjencyVertices : adjentlist})
+      let adj : IclientPacket = {vertexRoot : this.listNodeId.indexOf(connectNode[i].id) ,adjencyVertices : adjentlist}
+      adjentMatrix.push(adj)
     }
-    console.log(adjentMatrix)
     return adjentMatrix
+  }
+  travesal = (v : number) => {
+    let marked : boolean[] = []
+        let visit : number[] = []
+        let queue : number[] = []
+        marked.length = this.state.numberNode + 1 
+        for (let i = 0; i < marked.length; i++){
+            marked[i] = false
+        }
+        queue.push(v)
+        let adjentlist = this.getAdjencyList(this.state.listNode)
+        while (queue.length > 0) {
+            v = queue.shift()
+            if (marked[v] === false){
+                visit.push(v)
+                marked[v] = true
+                for (let i = 0; i < adjentlist[v].adjencyVertices.length; i++){
+                  const w = adjentlist[v].adjencyVertices[i].vertex_id
+                    if ( marked[w] === false){
+                        queue.push(w)
+                    }
+                }
+            }
+        }
+        console.log(visit)
+        return visit
   }
   savegraph = () => {
     // this.listEdge = []
-    this.updateGraph()
-    console.log(this.state.listNode)
+    this.updateGraph(this.listNode)
+    // console.log(this.state.listNode)
+    // console.log(this.listEdge)
+    // console.log(this.listNodeId)
+    
+    const component =  this.travesal (0) 
+    let connectNode: Inode[]  = []
+    for (let i = 0; i < component.length; i++) {
+      let test =  this.listNode[component[i]]
+      connectNode.push(test)
+    }
+    this.updateGraph(connectNode)
+    this.setState({ edges: this.listEdge })
+    console.log(connectNode)
     console.log(this.listEdge)
-    console.log(this.listNodeId)
-    console.log('========================================')
-    this.getAdjencyList()
+    let adjentlist = this.getAdjencyList(connectNode)
+    console.log(adjentlist)
+    // axios.get(`/api/test`).then(res => { console.log(res.data)}).catch(error => console.log(error))
+    axios.post('/api/graph', {
+      Adjentlist: adjentlist,
+      NodeList: connectNode,
+      IndexNode: component
+    })
+    .then(function (response) {
+      console.log(response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
   componentDidMount() {
     //  this. linedraw(247,400,100,200);
@@ -159,8 +203,8 @@ export default class App extends Component <any,any>
         <button onClick = {this.genNode}> Node Generator</button>
         <button onClick = {this.eleminateNode}> Elemination</button>
         <button onClick = {this.savegraph}> Save Graph</button>
-        <h2>{this.state.numberNode}</h2>
-        <p>Ahihi tesst</p>
+        <h2>{this.state.numberNode} Elector</h2>
+        <p></p>
       </div>
     );
   }

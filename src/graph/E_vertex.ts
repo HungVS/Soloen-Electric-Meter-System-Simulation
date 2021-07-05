@@ -7,8 +7,10 @@ export class Vertex {
     public hScore : number|0;
     public previous : Vertex
     public adjencyVerticesList: Vertex[]| null = null;
-    constructor(id?: number) {
+    constructor(id?: number, x?: number, y?: number) {
       this.id = id;
+      this.x = x
+      this.y = y
       this.gScore = 0;
       this.fScore = 0;
       this.hScore = 0;
