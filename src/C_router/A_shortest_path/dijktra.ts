@@ -4,39 +4,55 @@ import IroutingPacket = Decorator.IroutingPacket
 const INF : number = 9999999
 export class A_dijkstra {
     public visited : boolean[] ;
+    public nodeList : string[];
     public source: number|0 ;
-    public graph: Graph;
     public dist : number [];
     public previous : number [];
-    constructor(graph? : Graph) {
-        this.graph = graph
+    constructor(nodeList?: string [] ) {
+        this.nodeList = nodeList
       }
-    findShortestPath(graph: Graph,scr: number,IndexNode : number[]) {
+     
+      getNearest(graph: Graph) : number{
+        let minval = INF;
+        let minnode = 0;
+        for (let i = 0; i < graph.adjencyList.length; i ++) {
+            if (!this.visited[i] && this.dist[i] < minval){
+                minval = this.dist[i];
+                minnode = i;
+            }
+        }
+     return minnode ;
+    }  
+    findShortestPath(graph: Graph,scr: number) {
        this.source = scr
-       this.init(graph,scr,IndexNode)
+       this.init(graph,scr)
 
        for (let i = 0; i < graph.adjencyList.length;i ++){
-        let nearest = this.getNearest(graph,IndexNode)
+        let nearest = this.getNearest(graph)
         this.visited[nearest] = true;
             for (let j = 0; j <graph.adjencyList[nearest].adjencyVertices.length;j++){
                 const IdVertex: number = graph.adjencyList[nearest].adjencyVertices[j].vertex.id
                 if(this.dist[IdVertex]>this.dist[nearest] + graph.adjencyList[nearest].adjencyVertices[j].weight){
-
                     this.dist[IdVertex] = this.dist[nearest] + graph.adjencyList[nearest].adjencyVertices[j].weight
                     this.previous[IdVertex] = nearest;
                 }
             }
        } 
-       console.log('The previous ' + this.previous)
     }
 
     displaySolution (graph: Graph) {
         console.log('\n')
         console.log (' Dijktra Algrorithm ')
-        console.log("Node :\t \t\t Cost :\t\t\t  Path ");
+        console.log("Node :\t \t\t Cost :\t\t\t\t\t\t  Path ");
+        console.log('\n');
         for (let i = 0; i < graph.adjencyList.length; i ++ ){
-            process.stdout.write( +i+"\t\t\t "+this.dist[i]+"\t\t\t"+" ")
-            process.stdout.write(" " +i+" ")
+            if (i ==0 ) {
+                process.stdout.write(this.nodeList[i] +"\t\t\t "+this.dist[i]+"\t\t\t\t\t\t  "+" ")
+                process.stdout.write(" " + this.nodeList[i]+" ") 
+            } else {
+                process.stdout.write(this.nodeList[i] +"\t\t\t "+this.dist[i]+"\t\t\t"+" ")
+                process.stdout.write(" " + this.nodeList[i]+" ")
+            }
             let parnode = this.previous[i];
             let count = 0
             while ( parnode != this.source ){
@@ -45,7 +61,7 @@ export class A_dijkstra {
                 if(parnode == this.previous[parnode]) {
                 }
                 else {
-                    process.stdout.write(" <--" + parnode +" ");
+                    process.stdout.write(" <--" + this.nodeList[parnode] +" ");
                     parnode = this.previous[parnode];
                 }
                 // if (count =>3) {
@@ -53,24 +69,11 @@ export class A_dijkstra {
                 // }
             }
             if (i != this.source) {
-                process.stdout.write(' <--'+this.source)
+                process.stdout.write(' <--'+this.nodeList[this.source])
             }
             console.log('\n');
         }
         console.log ('============================================');
-        console.log('\n')
-        console.log('The previous ' + this.previous)
-    }
-    getNearest(graph: Graph,IndexNode : number[]) : number{
-        let minval = INF;
-        let minnode = 0;
-        for (let i = 0; i < graph.adjencyList.length; i ++) {
-            if (!this.visited[i] && this.dist[i] < minval){
-                minval = this.dist[i];
-                minnode = IndexNode[i];
-            }
-        }
-     return minnode ;
     }
 
     DFS(v : number){
@@ -121,7 +124,6 @@ export class A_dijkstra {
         return visit
     }
     setLevel(){
-        this.BFS(this.source)
         let routing :IroutingPacket[] = []
         let sourceRoot = {
             node : this.source,
@@ -179,12 +181,12 @@ export class A_dijkstra {
         return routing_sort 
     }
 
-    init (graph: Graph,scr: number,IndexNode : number[]) {
+    init (graph: Graph,scr: number) {
         let temp: boolean [] = []
         let tempDist : number[] = []
         let tempPar : number[] = []
         for (let i = 0; i < graph.adjencyList.length; i++){
-            tempPar.push(IndexNode[i])
+            tempPar.push(i)
             tempDist.push(INF)
             temp.push(false)
         }

@@ -73,7 +73,7 @@ export default class App extends Component <any,any>
           distance :dist
         } 
         if(edge.x1 !== undefined && edge.y1 !== undefined && edge.x2 !== undefined && edge.y2 !== undefined) {
-          if(this.dist(edge.x1,edge.y1,edge.x2,edge.y2) <= 200){
+          if(this.dist(edge.x1,edge.y1,edge.x2,edge.y2) <= 280){
             this.listEdge.push(edge)
             // console.log('i' + i, 'j' + j)
           }
@@ -124,7 +124,7 @@ export default class App extends Component <any,any>
                 }
             }
         }
-        console.log(visit)
+        // console.log(visit)
         return visit
   }
   savegraph = () => {
@@ -132,7 +132,7 @@ export default class App extends Component <any,any>
     this.updateGraph(this.listNode)
     // console.log(this.state.listNode)
     // console.log(this.listEdge)
-    // console.log(this.listNodeId)
+    console.log(this.listNodeId)
     
     const component =  this.travesal (0) 
     let connectNode: Inode[]  = []
@@ -142,15 +142,26 @@ export default class App extends Component <any,any>
     }
     this.updateGraph(connectNode)
     this.setState({ edges: this.listEdge })
-    console.log(connectNode)
-    console.log(this.listEdge)
+    // console.log(connectNode)
+    // console.log(this.listEdge)
     let adjentlist = this.getAdjencyList(connectNode)
+    for (let i = 0; i < adjentlist.length;i++) {
+      adjentlist[i].vertexRoot = this.state.listNodeId[adjentlist[i].vertexRoot]
+      for (let j = 0; j < adjentlist[i].adjencyVertices.length;j++) {
+        adjentlist[i].adjencyVertices[j].vertex_id =  this.state.listNodeId[adjentlist[i].adjencyVertices[j].vertex_id]
+      }
+    }
     console.log(adjentlist)
+    component.sort(function(a, b){return a-b});
+    const NodeList : string[] = []
+    for (let i = 0; i < component.length ; i ++ ) {
+      NodeList.push(this.listNodeId[component[i]])
+    }
+    console.log(NodeList)
     // axios.get(`/api/test`).then(res => { console.log(res.data)}).catch(error => console.log(error))
     axios.post('/api/graph', {
       Adjentlist: adjentlist,
-      NodeList: connectNode,
-      IndexNode: component
+      NodeList: connectNode
     })
     .then(function (response) {
       console.log(response.data);

@@ -5,7 +5,6 @@ import IadjencyList = Decorator.IadjencyList;
 export class C_GraphProcessor {
     
  initializeGraph (graph: Graph, vertexlist: Vertex[],weight: number[]) {
-    console.log(vertexlist)
     let tempadjencyList:IadjencyList[] = [];
     let tempAloneVertex : Vertex [] = [];
     let weightIndex = 0

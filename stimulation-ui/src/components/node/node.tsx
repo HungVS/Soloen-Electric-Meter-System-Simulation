@@ -28,7 +28,7 @@ export class Node extends Component <any,any> {
     let id : any
     if(this.props.name ==='DCU'){
      color = 'red'
-     id = ''
+     id = this.htmlId
     }
     else {
      color = 'blue'
@@ -38,7 +38,8 @@ export class Node extends Component <any,any> {
     <div id={this.htmlId} className="mydiv" style={{top: this.props.y, left: this.props.x}} onMouseMove = {this.handleChange}>
       <svg width={100} height={100}>
         <circle cx={50} cy={50} r={40} stroke="green" strokeWidth={4} fill= {color} />
-        <text fill="#ffffff" fontSize={15} fontFamily="Verdana" x={18} y={60}>{this.props.name} {id} </text>
+        <text fill="#ffffff" fontSize={15} fontFamily="Verdana" x={34} y={50}>{this.props.name}</text>
+        <text fill="#ffffff" fontSize={15} fontFamily="Verdana" x={34} y={70}> {id} </text>
       </svg>
       {/* <Line x0={this.state.x +50} y0={this.state.y +50} x1={100 +50} y1={200 +50} /> */}
       <span ref = {this.state.x} > x : {this.state.x} y : {this.state.y}</span>

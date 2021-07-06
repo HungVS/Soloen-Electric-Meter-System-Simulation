@@ -17,7 +17,7 @@ app.get('/api/test', (req, res) => {
 // })
 app.post('/api/graph',(req, res) => {
   // console.log(req.body.firstName);
-   Main(req.body.Adjentlist,req.body.NodeList,req.body.IndexNode)
+   Main(req.body.Adjentlist,req.body.NodeList)
   // res.json({Adjentlist : req.body.Adjentlist, NodeList : req.body.NodeList})
   res.send('Send Graph Success ******')
 })

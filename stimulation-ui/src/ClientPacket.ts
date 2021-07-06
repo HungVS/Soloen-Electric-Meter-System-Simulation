@@ -8,11 +8,11 @@ export interface Icoords {
     distance:number
 }
 export interface IclientPacket {
-  vertexRoot : number
+  vertexRoot : any
   adjencyVertices : Iedge[]
 }
 export interface Iedge {
-  vertex_id: number 
+  vertex_id: any 
   dist: number
 }
 export interface Inode {
