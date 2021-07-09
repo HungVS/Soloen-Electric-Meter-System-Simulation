@@ -1,50 +1,93 @@
 import {Graph} from '../../graph/Graph'
 import { Decorator} from '../../graph/decorator'
 import IroutingPacket = Decorator.IroutingPacket
+import { Vertex } from '../../graph/E_vertex';
 const INF : number = 9999999
 export class A_dijkstra {
+    public init_nodeList : number[];
     public visited : boolean[] ;
     public nodeList : string[];
-    public source: number|0 ;
+    public source: number ;
     public dist : number [];
     public previous : number [];
     constructor(nodeList?: string [] ) {
         this.nodeList = nodeList
       }
      
-      getNearest(graph: Graph) : number{
+      getNearest(graph: Graph){
         let minval = INF;
-        let minnode = 0;
+        let minnode = this.source;
+        let nearest = 0
         for (let i = 0; i < graph.adjencyList.length; i ++) {
             if (!this.visited[i] && this.dist[i] < minval){
                 minval = this.dist[i];
-                minnode = i;
+                minnode = graph.adjencyList[i].vertexRoot.id;
+                nearest = i
             }
         }
-     return minnode ;
+
+     return { minnode , nearest} ;
     }  
     findShortestPath(graph: Graph,scr: number) {
        this.source = scr
        this.init(graph,scr)
-
+       let tempnodeList = this.init_nodeList
        for (let i = 0; i < graph.adjencyList.length;i ++){
-        let nearest = this.getNearest(graph)
-        this.visited[nearest] = true;
-            for (let j = 0; j <graph.adjencyList[nearest].adjencyVertices.length;j++){
-                const IdVertex: number = graph.adjencyList[nearest].adjencyVertices[j].vertex.id
-                if(this.dist[IdVertex]>this.dist[nearest] + graph.adjencyList[nearest].adjencyVertices[j].weight){
-                    this.dist[IdVertex] = this.dist[nearest] + graph.adjencyList[nearest].adjencyVertices[j].weight
-                    this.previous[IdVertex] = nearest;
+        let nodeNearest = this.getNearest(graph)
+        // console.log(this.source)
+        // console.log(nodeNearest)
+        // console.log(this.source)
+        this.visited[nodeNearest.nearest] = true;
+            for (let j = 0; j <graph.adjencyList[nodeNearest.nearest].adjencyVertices.length;j++){
+                let Id: number = tempnodeList.indexOf(graph.adjencyList[nodeNearest.nearest].adjencyVertices[j].vertex.id)
+                if(this.dist[Id]>this.dist[nodeNearest.nearest] + graph.adjencyList[nodeNearest.nearest].adjencyVertices[j].weight){
+                    this.dist[Id] = this.dist[nodeNearest.nearest] + graph.adjencyList[nodeNearest.nearest].adjencyVertices[j].weight
+                    this.previous[Id] = nodeNearest.minnode;
                 }
             }
-       } 
+       }
     }
+    getShortestPath(graph: Graph,source : number, sink : number){
+        this.findShortestPath(graph,source)
+        // this.displaySolution(graph)
+        const path = []
+        const tempNodeList  = this.getGraphnode(graph)
+        let tempDist 
+        for (let i = 0; i < graph.adjencyList.length; i ++ ){
+            if (graph.adjencyList[i].vertexRoot.id == sink){
+                path.push(sink)
+                tempDist = this.dist[tempNodeList.indexOf(sink)]
+                let parnode = this.previous[i];
+                let count = 0
+                while ( parnode != source ){
+                    count++;
+                     if(parnode != this.previous[tempNodeList.indexOf(parnode)]) {
+                        path.push(parnode);
+                        parnode = this.previous[tempNodeList.indexOf(parnode)];
+                    }
+                    if(parnode == this.previous[tempNodeList.indexOf(parnode)]) {
+                        path.push(parnode);
+                        break;
+                    }
+                }
+            }
+        }
+        return  path.reverse()
+    }
+    getGraphnode(graph: Graph){
+        const tempNodeList : number[] = []
+        for (let i = 0; i < graph.adjencyList.length;i ++){
+            tempNodeList.push(graph.adjencyList[i].vertexRoot.id)
+        }
 
+        return tempNodeList
+    }
     displaySolution (graph: Graph) {
         console.log('\n')
         console.log (' Dijktra Algrorithm ')
         console.log("Node :\t \t\t Cost :\t\t\t\t\t\t  Path ");
         console.log('\n');
+        const tempNodeList  = this.getGraphnode(graph)
         for (let i = 0; i < graph.adjencyList.length; i ++ ){
             if (i ==0 ) {
                 process.stdout.write(this.nodeList[i] +"\t\t\t "+this.dist[i]+"\t\t\t\t\t\t  "+" ")
@@ -58,12 +101,12 @@ export class A_dijkstra {
             while ( parnode != this.source ){
                 // console.log(graph.adjencyList[i].vertexRoot)
                 count++;
-                if(parnode == this.previous[parnode]) {
-                }
-                else {
-                    process.stdout.write(" <--" + this.nodeList[parnode] +" ");
-                    parnode = this.previous[parnode];
-                }
+                // if(parnode == this.previous[this.previous.indexOf(parnode)]) {
+                // }
+                // else {
+                    process.stdout.write(" <--" + this.nodeList[tempNodeList.indexOf(parnode)] +" ");
+                    parnode = this.previous[tempNodeList.indexOf(parnode)];
+                // }
                 // if (count =>3) {
                 //     break
                 // }
@@ -186,13 +229,20 @@ export class A_dijkstra {
         let tempDist : number[] = []
         let tempPar : number[] = []
         for (let i = 0; i < graph.adjencyList.length; i++){
-            tempPar.push(i)
+            tempPar.push(graph.adjencyList[i].vertexRoot.id)
             tempDist.push(INF)
             temp.push(false)
         }
-        tempDist[scr] = 0
+        const tempNodeList  = this.getGraphnode(graph)
+        tempDist[tempNodeList.indexOf(scr)] = 0
         this.visited = temp
         this.dist = tempDist
         this.previous = tempPar
+        this.init_nodeList = tempPar
+    }
+    reset() {
+        this.visited = []
+        this.dist = []
+        this.previous = []
     }
 }

@@ -214,7 +214,7 @@ export default class App extends Component <any,any>
         <button onClick = {this.genNode}> Node Generator</button>
         <button onClick = {this.eleminateNode}> Elemination</button>
         <button onClick = {this.savegraph}> Save Graph</button>
-        <h2>{this.state.numberNode} Elector</h2>
+        <h2>{this.state.numberNode} Electric meters</h2>
         <p></p>
       </div>
     );

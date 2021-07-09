@@ -9,11 +9,14 @@ import { Icoords ,IclientPacket,Iedge ,Inode} from './ClientPacket'
 import E_Packet = Packet.E_Packet;
 import { Graph } from "./graph/Graph";
 import { Vertex } from "./graph/E_vertex";
+import {YenAlgro} from './C_router/A_shortest_path/YenKSP'
 
 export async function Main(Adjentlist : IclientPacket[] , NodeList : Inode[]) {
     const processor: C_GraphProcessor = new C_GraphProcessor();
     const graph: Graph = new Graph();
+    const StaticGraph: Graph = new Graph();
     // console.log( Adjentlist)
+    
     const vertexlist: Vertex[] = [];
     const weight: number[] = [];
     const NodeIdList: string[] = [];
@@ -47,48 +50,65 @@ export async function Main(Adjentlist : IclientPacket[] , NodeList : Inode[]) {
         childNodeList.push(new C_Node(i, Status.ONLINE));
     }
     processor.initializeGraph(graph, vertexlist, weight);
-    processor.getGraph(graph)
-    dijktra.findShortestPath(graph, 0);
-    dijktra.displaySolution(graph);
-    const levels = dijktra.setLevel();
-    console.log('[')
-    for (let i = 0; i < levels.length; i++) {
-        console.log ('{node '+ levels[i].node +' :' +NodeIdList[levels[i].node] +', levelID: { level:'+levels[i].levelID.level+ ', id:'+levels[i].levelID.id+'}}')
-    }
-    console.log(']')
-        /** II. Initiate DCU: */
-    const offlineList = [2, 6];
-    const rootNode: C_PacketProcessor = new C_PacketProcessor(0, Status.ONLINE);
-    const dcu: C_DCU = new C_DCU(rootNode);
-     /** III. Construct packet: */
-    const packet: E_Packet = {
-        destinationNodeID: { node: rootNode, levelID: { level: 0, id: 1 } },
-        data: "...",
-        routing: [],
-    };
+    processor.initializeGraph(StaticGraph, vertexlist, weight);
+    // console.log(graph)
+    // console.log(StaticGraph)
+    // let clone = {...graph} as Graph
+    // clone.adjencyList = [...graph.adjencyList]
+    // for(let i = 0; i <graph.adjencyList.length; i++){
+    //     clone.adjencyList[i].adjencyVertices = [...graph.adjencyList[i].adjencyVertices]
+    //     for (let j = 0; j < graph.adjencyList[i].adjencyVertices.length;j++){
+    //         clone.adjencyList[i].adjencyVertices[j] = {...graph.adjencyList[i].adjencyVertices[j]}
+    //         // clone.adjencyList[i].adjencyVertices[j].weight = Object.assign(graph.adjencyList[i].adjencyVertices[j])
+    //     }
+    // }
 
-    for (let i = 1; i <= levels.length -1; i++) {
-        console.log(levels[i].node)
-        console.log('-------------')
-        // console.log(childNodeList[levels[i].node].getID())
-        console.log(i)
-        packet.routing.push({
-        node: childNodeList[levels[i].node-1],
-        levelID: levels[i].levelID,
-        });
-    }
-    console.log('---------Starting propagate-----')
-    const timeoutNodeList = await dcu.getPacketProcessor().propagate(packet);
-    if (timeoutNodeList.length == 0) {
-        console.log('[TRACKING]:  Propagate Completed !!!')
-    } else {
-        console.log("Timeout list: ");
-        const timeout : number[] = [];
-        console.log(timeoutNodeList);
-    }
-    // dijktra.displaySolution(graph)
-    const a_star: A_aStrar = new A_aStrar();
-    a_star.findShortestPath(graph,0, 4)
+    // processor.getGraph(graph)
+    // dijktra.findShortestPath(graph, 0);
+    
+    // dijktra.displaySolution(graph);
+    // // const levels = dijktra.setLevel();
+    // console.log('[')
+    // for (let i = 0; i < levels.length; i++) {
+    //     console.log ('{node '+ levels[i].node +' :' +NodeIdList[levels[i].node] +', levelID: { level:'+levels[i].levelID.level+ ', id:'+levels[i].levelID.id+'}}')
+    // }
+
+    // console.log(']')
+    // processor.getGraph(graph)
+    YenAlgro(graph,StaticGraph,0,12,3,NodeIdList)
+    //     /** II. Initiate DCU: */
+    // const offlineList = [2, 6];
+    // const rootNode: C_PacketProcessor = new C_PacketProcessor(0, Status.ONLINE);
+    // const dcu: C_DCU = new C_DCU(rootNode);
+    //  /** III. Construct packet: */
+    // const packet: E_Packet = {
+    //     destinationNodeID: { node: rootNode, levelID: { level: 0, id: 1 } },
+    //     data: "...",
+    //     routing: [],
+    // };
+
+    // for (let i = 1; i <= levels.length -1; i++) {
+    //     console.log(levels[i].node)
+    //     console.log('-------------')
+    //     // console.log(childNodeList[levels[i].node].getID())
+    //     console.log(i)
+    //     packet.routing.push({
+    //     node: childNodeList[levels[i].node-1],
+    //     levelID: levels[i].levelID,
+    //     });
+    // }
+    // console.log('---------Starting propagate-----')
+    // const timeoutNodeList = await dcu.getPacketProcessor().propagate(packet);
+    // if (timeoutNodeList.length == 0) {
+    //     console.log('[TRACKING]:  Propagate Completed !!!')
+    // } else {
+    //     console.log("Timeout list: ");
+    //     const timeout : number[] = [];
+    //     console.log(timeoutNodeList);
+    // }
+    // // dijktra.displaySolution(graph)
+    // const a_star: A_aStrar = new A_aStrar();
+    // a_star.findShortestPath(graph,0, 4)
 }
 // export  function sort_adj  (Adjentlist : IclientPacket[], nodeindex : number[]){
 //     let list :IclientPacket[] = []
