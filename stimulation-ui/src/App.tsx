@@ -1,6 +1,8 @@
 import {Component} from 'react';
 import { Line } from 'react-lineto';
 import './App.css';
+import {Button, Container,Row, Col}   from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css'
 import {Node} from './components/node/node'
 import axios from 'axios';
 import { Icoords ,IclientPacket,Iedge,Inode } from './ClientPacket'
@@ -195,20 +197,27 @@ export default class App extends Component <any,any>
       }
     return (
       <div className="App">
+        <Container fluid>
+          <Row>
+            <Col md={4} style={{margin :'0 auto'}}>
+              <Row>
+                <Col ><Button variant = 'primary' onClick = {this.genNode}> Node Generator</Button></Col>
+                <Col ><Button variant = 'danger' onClick = {this.eleminateNode}> Elemination</Button></Col>
+                <Col ><Button variant = 'success' onClick = {this.savegraph}> Save Graph</Button></Col>
+              </Row>
+            </Col>
+            <h2>{this.state.numberNode} Electric meters</h2>
+          </Row>
         <div className = 'col-md-3'>
         {
         indents
         }
-        < Node  name = 'DCU' onMouseMove= {this.eventhandler} x = {480} y = {70}/>
+        < Node  name = 'DCU' onMouseMove= {this.eventhandler} x = {1000} y = {150}/>
         { 
         App.renderEdgeList(this.state.edges)
         }
         </div>
-        <button onClick = {this.genNode}> Node Generator</button>
-        <button onClick = {this.eleminateNode}> Elemination</button>
-        <button onClick = {this.savegraph}> Save Graph</button>
-        <h2>{this.state.numberNode} Electric meters</h2>
-        <p></p>
+        </Container>
       </div>
     );
   }
