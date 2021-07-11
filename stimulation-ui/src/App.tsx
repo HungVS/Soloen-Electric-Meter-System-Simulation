@@ -1,11 +1,12 @@
 import {Component} from 'react';
 import { Line } from 'react-lineto';
 import './App.css';
-import {Button, Container,Row, Col}   from 'react-bootstrap';
+import {Button, Container,Row, Col, Alert}   from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Node} from './components/node/node'
 import axios from 'axios';
 import { Icoords ,IclientPacket,Iedge,Inode } from './ClientPacket'
+import Delayed from './components/delay/delay'
 
 export default class App extends Component <any,any>
 {
@@ -185,7 +186,9 @@ export default class App extends Component <any,any>
     return (
           <div className ="line">
           {listEdge.map((listEdge: { x1: number, y1: number; x2: number; y2: number}) =>
-            <Line x0={listEdge.x1 +50} y0={listEdge.y1 +50} x1={listEdge.x2 +50} y1={listEdge.y2 +50}> </Line>
+             <Delayed waitBeforeShow={100}>
+                <Line x0={listEdge.x1 +50} y0={listEdge.y1 +50} x1={listEdge.x2 +50} y1={listEdge.y2 +50} className = 'LineTo' > </Line>
+             </Delayed>
             )}
           </div>
    );
@@ -197,26 +200,36 @@ export default class App extends Component <any,any>
       }
     return (
       <div className="App">
-        <Container fluid>
+        <Container  fluid>
           <Row>
-            <Col md={4} style={{margin :'0 auto'}}>
-              <Row>
-                <Col ><Button variant = 'primary' onClick = {this.genNode}> Node Generator</Button></Col>
-                <Col ><Button variant = 'danger' onClick = {this.eleminateNode}> Elemination</Button></Col>
-                <Col ><Button variant = 'success' onClick = {this.savegraph}> Save Graph</Button></Col>
+            <Col className="border border-dark border-4" md = {8} style = {{minHeight : 1500}}>
+              <Row className="graph_header">  
+                <Col md={5} style={{margin :'0 auto'}}>
+                  
+                    <Alert variant='secondary'>
+                    <Row>
+                      <Col ><Button variant = 'primary' onClick = {this.genNode}> Node Generator</Button></Col>
+                      <Col ><Button variant = 'danger' onClick = {this.eleminateNode}> Elemination</Button></Col>
+                      <Col ><Button variant = 'success' onClick = {this.savegraph}> Save Graph</Button></Col>
+                      <h2 style={{marginTop: 10}}>{this.state.numberNode} Electric meters</h2>
+                      </Row>
+                    </Alert>
+                </Col>
+              </Row>
+              <Row className="graph">
+                <Col md = {12}>
+                {
+                indents
+                }
+                < Node  name = 'DCU' onMouseMove= {this.eventhandler} x = {900} y = {180}/>
+                { 
+                App.renderEdgeList(this.state.edges)
+                }
+                </Col>
               </Row>
             </Col>
-            <h2>{this.state.numberNode} Electric meters</h2>
+            <Col md = {4} className="border border-dark border-2"></Col>
           </Row>
-        <div className = 'col-md-3'>
-        {
-        indents
-        }
-        < Node  name = 'DCU' onMouseMove= {this.eventhandler} x = {1000} y = {150}/>
-        { 
-        App.renderEdgeList(this.state.edges)
-        }
-        </div>
         </Container>
       </div>
     );

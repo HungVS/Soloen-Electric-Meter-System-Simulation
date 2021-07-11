@@ -26,9 +26,7 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
+
 
 @keyframes App-logo-spin {
   from {
@@ -37,4 +35,18 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.LineTo {
+  transition: width 4s;
+  animation:line 2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes line {
+  0%   {border-top: 5px solid #e6a5a1;}
+  25%  {border-top: 5px solid #e6756e;}
+  50%  {border-top: 5px solid #e65047;}
+  75%  {border-top: 5px solid #e6382e;}
+  100% {border-top: 5px solid #db1207;}
 }
