@@ -44,9 +44,13 @@
 }
 
 @keyframes line {
-  0%   {border-top: 5px solid #e6a5a1;}
-  25%  {border-top: 5px solid #e6756e;}
-  50%  {border-top: 5px solid #e65047;}
-  75%  {border-top: 5px solid #e6382e;}
-  100% {border-top: 5px solid #db1207;}
+  0%   {border-top: 1px solid #56855c;}
+  10%  {border-top: 1.5px solid #508a57;}
+  25%  {border-top: 2px solid #41874a;}
+  40%  {border-top: 2.5px solid #3c9147;}
+  50%  {border-top: 3px solid #318c3d;}
+  60%  {border-top: 3.5px solid #268c33;}
+  75%  {border-top: 4px solid #22852f;}
+  90%  {border-top: 4.5px solid #158a24;}
+  100% {border-top: 5px solid #00bd1a;}
 }
