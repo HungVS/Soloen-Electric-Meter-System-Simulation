@@ -12,8 +12,8 @@ import { C_Node, Status } from "./node/C_Node";
   const numChildNodes = 7;
 
   for (let i = 1; i <= numChildNodes; i++) {
-    // if ([2, 6].includes(i)) childNodeList.push(new C_Node(i, Status.OFFLINE));
-    // else 
+    if ([2, 6].includes(i)) childNodeList.push(new C_Node(i, Status.OFFLINE));
+    else 
     childNodeList.push(new C_Node(i, Status.ONLINE));
   }
 
@@ -30,8 +30,12 @@ import { C_Node, Status } from "./node/C_Node";
       { node: childNodeList[5], levelID: { level: 2, id: 4 } },
     ],
   };
-  console.log('---------Starting propagate-----')
-  const timeoutNodeList = await dcu.getPacketProcessor().propagate(packet);
-  console.log("Timeout list: ");
-  console.log(timeoutNodeList);
+
+  for (let i = 0 ;i< packet.routing.length; i++) {
+    console.log(i, packet.routing[i].node.getID(), packet.routing[i].levelID.level,packet.routing[i].levelID.id)
+}
+  // console.log('---------Starting propagate-----')
+  // const timeoutNodeList = await dcu.getPacketProcessor().propagate(packet);
+  // console.log("Timeout list: ");
+  // console.log(timeoutNodeList);
 })();

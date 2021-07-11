@@ -34,9 +34,6 @@ export class A_dijkstra {
        let tempnodeList = this.init_nodeList
        for (let i = 0; i < graph.adjencyList.length;i ++){
         let nodeNearest = this.getNearest(graph)
-        // console.log(this.source)
-        // console.log(nodeNearest)
-        // console.log(this.source)
         this.visited[nodeNearest.nearest] = true;
             for (let j = 0; j <graph.adjencyList[nodeNearest.nearest].adjencyVertices.length;j++){
                 let Id: number = tempnodeList.indexOf(graph.adjencyList[nodeNearest.nearest].adjencyVertices[j].vertex.id)
@@ -166,8 +163,9 @@ export class A_dijkstra {
         console.log(visit)
         return visit
     }
-    setLevel(){
+    setLevel(graph: Graph){
         let routing :IroutingPacket[] = []
+        const tempNodeList  = this.getGraphnode(graph)
         let sourceRoot = {
             node : this.source,
             levelID: { level: 0, id: 1}
@@ -186,13 +184,13 @@ export class A_dijkstra {
         while (stack.length > 0) {
             let index = 0;
             v = stack.pop()
-            if (marked[v] == false){
+            if (marked[tempNodeList.indexOf(v)] == false){
                 for (let i = 0; i <routing.length; i++){
                     if(routing[i].levelID.level == level){
                             for (let j = 0; j <this.previous.length; j++){
-                                if(routing[i].node == this.previous[j] && j != this.source){
+                                if(routing[i].node == this.previous[j] && tempNodeList.indexOf(j) != this.source){
                                     let rout = {
-                                        node : j,
+                                        node : tempNodeList.indexOf(j),
                                         levelID: { level: level +1, id: ++index}
                                     }
                                     routing.push(rout)

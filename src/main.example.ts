@@ -42,7 +42,7 @@ import E_Packet = Packet.E_Packet;
   processor.getGraph(graph)
   dijktra.findShortestPath(graph, 0);
   dijktra.displaySolution(graph)
-  const levels = dijktra.setLevel();
+  const levels = dijktra.setLevel(graph);
   console.log(levels)
 
   /** II. Initiate DCU: */

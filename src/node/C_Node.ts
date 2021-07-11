@@ -32,10 +32,11 @@ export class C_Node {
    */
   async onIncommingPacket(packet: E_Packet): Promise<number[]> {
     for (let i = 0; i < packet.routing.length; i++){
-      await this.delay(600);
+      // await this.delay(600);
       console.log(packet);
     }
     if (this.status == Status.OFFLINE) {
+      console.log('Something went wrong')
       await this.delay(4000);
       return [];
     }

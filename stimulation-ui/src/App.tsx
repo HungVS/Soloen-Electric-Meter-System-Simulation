@@ -75,7 +75,6 @@ export default class App extends Component <any,any>
         if(edge.x1 !== undefined && edge.y1 !== undefined && edge.x2 !== undefined && edge.y2 !== undefined) {
           if(this.dist(edge.x1,edge.y1,edge.x2,edge.y2) <= 280){
             this.listEdge.push(edge)
-            // console.log('i' + i, 'j' + j)
           }
         }
       }
@@ -130,10 +129,6 @@ export default class App extends Component <any,any>
   savegraph = () => {
     // this.listEdge = []
     this.updateGraph(this.listNode)
-    // console.log(this.state.listNode)
-    // console.log(this.listEdge)
-    console.log(this.listNodeId)
-    
     const component =  this.travesal (0) 
     let connectNode: Inode[]  = []
     for (let i = 0; i < component.length; i++) {
@@ -157,8 +152,6 @@ export default class App extends Component <any,any>
     for (let i = 0; i < component.length ; i ++ ) {
       NodeList.push(this.listNodeId[component[i]])
     }
-    console.log(NodeList)
-    // axios.get(`/api/test`).then(res => { console.log(res.data)}).catch(error => console.log(error))
     axios.post('/api/graph', {
       Adjentlist: adjentlist,
       NodeList: connectNode
@@ -218,30 +211,5 @@ export default class App extends Component <any,any>
         <p></p>
       </div>
     );
-  }
-
-  linedraw(x1, y1, x2, y2) {
-    if (x2 < x1) {
-        var tmp;
-        tmp = x2 ; x2 = x1 ; x1 = tmp;
-        tmp = y2 ; y2 = y1 ; y1 = tmp;
-    }
-
-    var lineLength = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    var m = (y2 - y1) / (x2 - x1);
-
-    var degree = Math.atan(m) * 180 / Math.PI;
-
-    document.body.innerHTML += "<div class='line' style='transform-origin: top left; transform: rotate(" + degree + "deg); width: " + lineLength + "px; height: 1px; background: black; position: absolute; top: " + y1 + "px; left: " + x1 + "px;'></div>";
-}
-  drawLine(x1, y1, x2, y2){
-    let distance = Math.sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2))
-    const xMid = (x1 + x2)/2
-    const yMid = (y1 + y2)/2
-    const salopeRadius = Math.atan2(y1-y2,x1 - x2 )
-    const salopeDegree = (salopeRadius*180)/Math.PI
-    const top = yMid
-    const left = xMid - (distance/2)
-    document.body.innerHTML += "<div class='line' style='transform-origin: top left; transform: rotate(" + salopeDegree + "deg); width: " + distance + "px; height: 1px; background: black; position: absolute; top: " + top + "px; left: " + left + "px;'></div>";
   }
 }
