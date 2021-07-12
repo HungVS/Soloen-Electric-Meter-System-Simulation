@@ -236,10 +236,12 @@ export default class App extends Component <any,any>
           if(this.state.connectNode[i].id !==undefined && this.state.solutionPreviousNode[i] !== undefined && this.state.connectNode[i].id !==  this.state.solutionPreviousNode[i]){
             let toNode = this.getnodeById(this.state.solutionPreviousNode[i])
             console.log(fromNode.id, toNode.id)
-            solv.push(<Delayed waitBeforeShow={3000}>
-                        <Line x0={fromNode.x +50} y0={fromNode.y +50} x1={toNode.x +50} y1={toNode.y +50} className ='Solution' > 
-                        </Line>
-                      </Delayed>)
+            if(this.dist(fromNode.x,fromNode.y,toNode.x,toNode.y) <= 300){
+              solv.push(<Delayed waitBeforeShow={2000}>
+                <Line x0={fromNode.x +50} y0={fromNode.y +50} x1={toNode.x +50} y1={toNode.y +50} className ='Solution' > 
+                </Line>
+              </Delayed>)
+            }
           }
         }    
       }
@@ -249,7 +251,7 @@ export default class App extends Component <any,any>
       <div className="App">
         <Container  fluid>
           <Row>
-            <Col className="border border-dark border-4" md = {8} style = {{minHeight : 1500}}>
+            <Col className="border border-dark border-4" md = {9} style = {{minHeight : 1500, margin :'0 auto'}}>
               <Row className="graph_header">  
                 <Col md={5} style={{margin :'0 auto'}}>
                   
@@ -278,7 +280,7 @@ export default class App extends Component <any,any>
                 </Col>
               </Row>
             </Col>
-            <Col md = {4} className="border border-dark border-2">
+            {/* <Col md = {4} className="border border-dark border-2">
               <Row className ='treeHeader'>
               <Alert variant='secondary' style = {{paddingBottom : 66}}>
               <h2 style={{marginTop: 10}}>Tree</h2>
@@ -287,7 +289,7 @@ export default class App extends Component <any,any>
               <Row className ='tree'>
                 <p></p>
               </Row>
-            </Col>
+            </Col> */}
           </Row>
         </Container>
       </div>
