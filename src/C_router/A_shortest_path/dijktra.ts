@@ -139,6 +139,14 @@ export class A_dijkstra {
         }
         return visit
     }
+    getPreviousByELecID(graph: Graph){
+        const tempNodeList  = this.getGraphnode(graph)
+        let previousByELecID : string [] = []
+        this.previous.forEach( (node,index) => {
+            previousByELecID.push(this.nodeList[node])
+        })
+        return previousByELecID
+    }
     BFS(v : number){
         let marked : boolean[] = []
         let visit : number[] = []

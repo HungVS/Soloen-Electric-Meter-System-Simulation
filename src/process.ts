@@ -13,7 +13,7 @@ import { C_PacketProcessor } from "./dcu/C_PacketProcessor";
 import E_Packet = Packet.E_Packet;
 
 
-export async function Main(Adjentlist : IclientPacket[] , NodeList : Inode[]) {
+export  function Main(Adjentlist : IclientPacket[] , NodeList : Inode[]) {
     const processor: C_GraphProcessor = new C_GraphProcessor();
     const graph: Graph = new Graph();
     const StaticGraph: Graph = new Graph(); 
@@ -28,7 +28,7 @@ export async function Main(Adjentlist : IclientPacket[] , NodeList : Inode[]) {
     const dijktra: A_dijkstra = new A_dijkstra(base_graph.NodeIdList);
     const soureceNode = 0
     dijktra.findShortestPath(graph, soureceNode);
-    // dijktra.displaySolution(graph);
+    dijktra.displaySolution(graph);
     const levels = dijktra.setLevel(graph);
 
 
@@ -38,12 +38,12 @@ export async function Main(Adjentlist : IclientPacket[] , NodeList : Inode[]) {
     }
     console.log(']')
     // processor.getGraph(graph)
-
+    console.log(base_graph.NodeIdList)
     // YenAlgro(graph,StaticGraph,0,12,3,base_graph.NodeIdList)
 
         /** II. Initiate DCU: */
     const offlineList = [1,2,6];
-    const nodeList = dijktra.getGraphnode(graph)
+    const nodeList =  dijktra.getGraphnode(graph)
 
     for (let i = 0; i < offlineList.length; i++){
         for (let j = 0; j < nodeList.length ; j ++){
@@ -84,6 +84,10 @@ export async function Main(Adjentlist : IclientPacket[] , NodeList : Inode[]) {
     // // dijktra.displaySolution(graph)
     // const a_star: A_aStrar = new A_aStrar();
     // a_star.findShortestPath(graph,0, 4)
+    const  data = dijktra.getPreviousByELecID(graph)
+    const json =Object.assign({}, data);
+    console.log(json)
+    return json 
 }
 // export  function sort_adj  (Adjentlist : IclientPacket[], nodeindex : number[]){
 //     let list :IclientPacket[] = []

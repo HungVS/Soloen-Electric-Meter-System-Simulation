@@ -4,6 +4,7 @@ import './App.css';
 import {Button, Container,Row, Col, Alert}   from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Node} from './components/node/node'
+import {GraphNode} from './components/graphNode/graphNode'
 import axios from 'axios';
 import { Icoords ,IclientPacket,Iedge,Inode } from './ClientPacket'
 import Delayed from './components/delay/delay'
@@ -21,7 +22,13 @@ export default class App extends Component <any,any>
   }
   constructor (props :any) {
     super(props);
-    this.state = {edges  : [], numberNode : 0,listNodeId : [], listNode : []};
+    this.state = {edges  : [],
+                  numberNode : 0,
+                  listNodeId : [],
+                  listNode : [],
+                  solutionPreviousNode: [],
+                  connectNode : []
+                };
     this.listNode = []
     this.listNodeId = []
     this.listEdge  = []
@@ -118,12 +125,18 @@ export default class App extends Component <any,any>
             if (marked[v] === false){
                 visit.push(v)
                 marked[v] = true
-                for (let i = 0; i < adjentlist[v].adjencyVertices.length; i++){
-                  const w = adjentlist[v].adjencyVertices[i].vertex_id
-                    if ( marked[w] === false){
-                        queue.push(w)
-                    }
+                try {
+                  for (let i = 0; i < adjentlist[v].adjencyVertices.length; i++){
+                    const w = adjentlist[v].adjencyVertices[i].vertex_id
+                      if ( marked[w] === false){
+                          queue.push(w)
+                      }
+                  }
                 }
+                catch (e) {
+
+                }
+                
             }
         }
         // console.log(visit)
@@ -131,16 +144,16 @@ export default class App extends Component <any,any>
   }
   savegraph = () => {
     // this.listEdge = []
-    this.updateGraph(this.listNode)
+    try {
+      this.updateGraph(this.listNode)
     const component =  this.travesal (0) 
     let connectNode: Inode[]  = []
     for (let i = 0; i < component.length; i++) {
-      let test =  this.listNode[component[i]]
-      connectNode.push(test)
+      let node =  this.listNode[component[i]]
+      connectNode.push(node)
     }
     this.updateGraph(connectNode)
-    this.setState({ edges: this.listEdge })
-    // console.log(connectNode)
+    this.setState({ edges: this.listEdge, connectNode : connectNode })
     // console.log(this.listEdge)
     let adjentlist = this.getAdjencyList(connectNode)
     for (let i = 0; i < adjentlist.length;i++) {
@@ -149,7 +162,7 @@ export default class App extends Component <any,any>
         adjentlist[i].adjencyVertices[j].vertex_id =  this.state.listNodeId[adjentlist[i].adjencyVertices[j].vertex_id]
       }
     }
-    console.log(adjentlist)
+    // console.log(adjentlist)
     component.sort(function(a, b){return a-b});
     const NodeList : string[] = []
     for (let i = 0; i < component.length ; i ++ ) {
@@ -159,12 +172,20 @@ export default class App extends Component <any,any>
       Adjentlist: adjentlist,
       NodeList: connectNode
     })
-    .then(function (response) {
-      console.log(response.data);
+    .then( (response) => {
+      const tempSolution  = [];
+      for(let i = 0; i <Object.keys(response.data.solution).length; i++) {
+        tempSolution.push(response.data.solution[i]);
+      }
+      this.setState({solutionPreviousNode:tempSolution})
     })
     .catch(function (error) {
       console.log(error);
     });
+    }
+    catch (e) {
+
+    }
   }
   componentDidMount() {
     //  this. linedraw(247,400,100,200);
@@ -177,10 +198,18 @@ export default class App extends Component <any,any>
       this.listNode.pop()
       this.listNodeId.pop()
       this.listEdge.pop()
-      console.log(this.listEdge)
+      // console.log(this.listEdge)
       this.setState({edges: this.listEdge , numberNode : this.state.numberNode -1 ,listNode: this.listNode ,listNodeId: this.listNodeId})
     }
-
+  }
+  getnodeById = (id : string) => {
+    let node : any
+    for (let i = 0; i <this.state.connectNode.length; i++) {
+      if (id === this.state.connectNode[i].id) {
+        node = this.state.connectNode[i]
+      }
+    }
+    return node
   }
   static renderEdgeList(listEdge:any) {
     return (
@@ -193,11 +222,29 @@ export default class App extends Component <any,any>
           </div>
    );
   }
+  
     render(){
       var indents = [];
-      for (var i = 0; i < this.state.numberNode; i++) {
+      for (let i = 0; i < this.state.numberNode; i++) {
         indents.push(<Node  name = 'ELEC' key={i} onMouseMove= {this.eventhandler}/>);
       }
+      var solv = [];   
+        
+      try {
+        for (let i = 0; i < this.state.connectNode.length; i++) {
+          let fromNode = this.state.connectNode[i]
+          if(this.state.connectNode[i].id !==undefined && this.state.solutionPreviousNode[i] !== undefined && this.state.connectNode[i].id !==  this.state.solutionPreviousNode[i]){
+            let toNode = this.getnodeById(this.state.solutionPreviousNode[i])
+            console.log(fromNode.id, toNode.id)
+            solv.push(<Delayed waitBeforeShow={3000}>
+                        <Line x0={fromNode.x +50} y0={fromNode.y +50} x1={toNode.x +50} y1={toNode.y +50} className ='Solution' > 
+                        </Line>
+                      </Delayed>)
+          }
+        }    
+      }
+      catch (e) {} 
+      
     return (
       <div className="App">
         <Container  fluid>
@@ -225,10 +272,22 @@ export default class App extends Component <any,any>
                 { 
                 App.renderEdgeList(this.state.edges)
                 }
+                {
+                solv
+                }
                 </Col>
               </Row>
             </Col>
-            <Col md = {4} className="border border-dark border-2"></Col>
+            <Col md = {4} className="border border-dark border-2">
+              <Row className ='treeHeader'>
+              <Alert variant='secondary' style = {{paddingBottom : 66}}>
+              <h2 style={{marginTop: 10}}>Tree</h2>
+              </Alert>
+              </Row>
+              <Row className ='tree'>
+                <p></p>
+              </Row>
+            </Col>
           </Row>
         </Container>
       </div>

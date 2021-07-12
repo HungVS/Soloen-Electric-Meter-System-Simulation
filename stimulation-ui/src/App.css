@@ -54,3 +54,19 @@
   90%  {border-top: 4.5px solid #158a24;}
   100% {border-top: 5px solid #00bd1a;}
 }
+.Solution {
+  transition: width 2s;
+  animation:solutionLine 2s;
+  animation-fill-mode: forwards;
+}
+@keyframes solutionLine {
+  0%   {border-top: 1px dashed #fc9d03;}
+  10%  {border-top: 1.5px dashed #fc9d03;}
+  25%  {border-top: 2px dashed #fc9d03;}
+  40%  {border-top: 2.5px dashed #fc9d03;}
+  50%  {border-top: 3px dashed #fc9d03;}
+  60%  {border-top: 3.5px dashed #fc9d03;}
+  75%  {border-top: 4px dashed #fc9d03;}
+  90%  {border-top: 4.5px dashed #fc9d03;}
+  100% {border-top: 7px dashed #fc9d03;}
+}

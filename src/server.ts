@@ -1,5 +1,6 @@
 import express from 'express';
 import { Main } from './process';
+// var apiResponse = require('express-api-response');
 // rest of the code remains same
 const bodyParser = require("body-parser");
 const app = express();
@@ -17,9 +18,13 @@ app.get('/api/test', (req, res) => {
 // })
 app.post('/api/graph',(req, res) => {
   // console.log(req.body.firstName);
-   Main(req.body.Adjentlist,req.body.NodeList)
+   const solution =  Main(req.body.Adjentlist,req.body.NodeList)
+  res.json({solution : solution  , message :"Send Graph Success ******"})
+    
   // res.json({Adjentlist : req.body.Adjentlist, NodeList : req.body.NodeList})
-  res.send('Send Graph Success ******')
+  // res.send('Send Graph Success ******')
+  //  const json =Object.assign({}, solution);;
+  // console.log(solution)
 })
 app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`);
