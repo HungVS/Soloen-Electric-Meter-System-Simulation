@@ -1,27 +1,28 @@
 import { Component} from 'react';
 import './node.css';
 import nextId from "react-id-generator";
+import axios from 'axios';  
 //import { Container } from 'reactstrap';
 
 export class Node extends Component <any,any> {
   static displayName = Node.name;
   htmlId = nextId();
+  id: any;
   constructor (props :any) {
     super(props);
     this.state = {
       id : this.htmlId,
       x : this.props.x, 
       y : this.props.y ,
-      name: this.props.name
+      name: this.props.name,
+      ksp : []
     };
   }
   componentDidMount() {
     this.dragElement(document.querySelector(`#${this.htmlId}`));
   }
   componentDidUpdate() {
-    if (this.props.onMouseMove) {
-      this.props.onMouseMove(this.state);
-    }
+    
   }
   render () {
     let color : any 
@@ -60,7 +61,7 @@ export class Node extends Component <any,any> {
         <br/>
         <span> {this.props.name}</span>
         <br/>
-        <span ref = {this.state.x} > x : {this.state.x} y : {this.state.y}</span>
+        <span  > x : {this.state.x} y : {this.state.y}</span>
       </div>
         );
     }
@@ -69,7 +70,7 @@ export class Node extends Component <any,any> {
      id = this.htmlId
 
      return (
-      <div id={this.htmlId} className="mydiv" style={{top: this.props.y, left: this.props.x}} onMouseMove = {this.handleChange}>
+      <div id={this.htmlId}  className="mydiv" style={{top: this.props.y, left: this.props.x}} onMouseMove = {this.handleChange} onClick={ this.handleClick}>
 
         <svg id="Layer_1" height="90" viewBox="0 0 512 512" width="90" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1">
         <path d="m83 373v100c0 15.19 12.46 28 27.64 28h289.78c15.17 0 27.58-12.81 27.58-28v-100z" fill="#585d68"/>
@@ -104,13 +105,66 @@ export class Node extends Component <any,any> {
         <br/>
         <span> {this.props.name}</span>
         <br/>
-        <span ref = {this.state.x} > x : {this.state.x} y : {this.state.y}</span>
+        <span  > x : {this.state.x} y : {this.state.y}</span>
       </div>
         );
     }
   }
+  // getId =() =>{
+  //   if(this.htmlId !== undefined) {
+  //     const temp = []
+  //     for (let i = 0; i < this.props.connect.length; i++) {
+  //       temp.push(this.props.connect[i].id)
+  //     }
+  //     if(temp.includes(this.htmlId)){
+  //       console.log(this.htmlId)
+  //       axios.post('/api/ksp',{
+  //         targetNode : this.htmlId
+  //       }).then(response =>{
+  //         console.log(response.data.solv)
+  //       })
+  //     }
+  //   }
+  // }
 
-  handleChange = e => {this.setState({ [e.target.name]: e.target.value })};
+  handleClick = e => {
+    try
+    { 
+      this.setState({ [e.target.name]: e.target.value }, () => {
+        if(this.htmlId !== undefined) {
+          const temp = []
+          for (let i = 0; i < this.props.connect.length; i++) {
+            if(this.props.connect[i].id !== undefined){
+              temp.push(this.props.connect[i].id)
+            }
+
+          }
+          if(temp.includes(this.htmlId)){
+            console.log(this.htmlId)
+            axios.post('/api/ksp',{
+              targetNode : this.htmlId
+            }).then(response =>{
+              this.setState({ksp : response.data.solv})
+              if (this.props.onClick){
+                this.props.onClick(this.state.ksp);
+              }
+            })
+          }
+        }
+      })
+    }
+    catch (error) {
+
+    }
+  };
+
+  handleChange = e => {
+    this.setState({ [e.target.name]: e.target.value }, () => {
+      if (this.props.onMouseMove) {
+        this.props.onMouseMove(this.state);
+      }
+    })
+  };
 
   dragElement(elmnt : any) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -147,3 +201,4 @@ export class Node extends Component <any,any> {
     }
   }
 }
+

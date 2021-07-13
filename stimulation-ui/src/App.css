@@ -70,3 +70,12 @@
   90%  {border-top: 4.5px dashed #fc9d03;}
   100% {border-top: 7px dashed #fc9d03;}
 }
+
+.ksp {
+  animation:ksp 1s;
+  animation-fill-mode: forwards;
+}
+@keyframes ksp {
+
+  100% {border-top-width: 7px;}
+}
