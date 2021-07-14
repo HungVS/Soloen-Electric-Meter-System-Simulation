@@ -57,14 +57,12 @@ export default class App extends Component <any,any>
                           x2:this.state.connectNode[node[i][k+1]].x,
                           y2: this.state.connectNode[node[i][k+1]].y
             })
-            console.log(this.state.connectNode[node[i][k]].x,this.state.connectNode[node[i][k]].y,this.state.connectNode[node[i][k+1]].x,this.state.connectNode[node[i][k+1]].y)
           }
         }
       }
       temp.push(tempKsp)
       node_show.push(tempshow)
     }
-    console.log(this.state.connectNode)
     console.log(node)
     this.setState({ksp: temp})
     this.savegraph()
