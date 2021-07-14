@@ -1,10 +1,10 @@
 import {Component} from 'react';
 import { Line } from 'react-lineto';
 import './App.css';
-import {Button, Container,Row, Col, Alert}   from 'react-bootstrap';
+import {Button, Container,Row, Col, Alert, Form}   from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Node} from './components/node/node'
-import {GraphNode} from './components/graphNode/graphNode'
+import {DCU} from './components/dcu/dcu'
 import axios from 'axios';
 import { Icoords ,IclientPacket,Iedge,Inode } from './ClientPacket'
 import Delayed from './components/delay/delay'
@@ -30,11 +30,18 @@ export default class App extends Component <any,any>
                   solutionPreviousNode: [],
                   connectNode : [],
                   ksp : [],
+                  kspColor : '',
+                  v_graph : true,
+                  v_nodes : true,
+                  v_dijktra: false,
+                  v_ksp : false,
                 };
+    this.changeColor()
     this.listNode = []
     this.listNodeId = []
     this.listEdge  = []
   }
+  /* Event handlers*/
   eventClickNode = (node) => {
     const temp : any[] = []
     const node_show : any[] = []
@@ -71,9 +78,6 @@ export default class App extends Component <any,any>
       name : data.name
     };
     if(this.listNode.length === 0) {
-      this.listNode.push(node)
-      this.listNodeId.push(node.id)
-      this.setState({ listNode: this.listNode, listNodeId: this.listNodeId })
     }
     else {
       for (let i = 0; i < this.listNode.length; i++){
@@ -90,6 +94,146 @@ export default class App extends Component <any,any>
       }
     }
   }
+
+  componentDidMount() {
+    //  this. linedraw(247,400,100,200);
+
+  }
+
+  handleVgraph = event => {
+    this.setState({v_graph: !this.state.v_graph});
+  }
+  handleVnode = event => {
+    this.setState({v_nodes: !this.state.v_nodes});
+  }
+  handleVdijktra = event => {
+    this.setState({v_dijktra: !this.state.v_dijktra});
+  }
+  handleVksp = event => {
+    this.setState({v_ksp: !this.state.v_ksp});
+  }
+  /* End of event handlers*/
+  render(){
+      var nodes = [];
+      var solv = [];   
+      var ksp = [];
+      var edges = [];
+      //DCU
+      let  dcuConfig = {
+        id : 'dcu',
+        x : 1120, 
+        y : 290,
+        name : 'DCU'
+      };
+      var dcu = < DCU id ={dcuConfig.id}  name = {dcuConfig.name} onMouseMove= {this.eventhandler} x = {dcuConfig.x} y = {dcuConfig.y}/>
+      if(this.listNode.length === 0) {
+        this.listNode.push(dcuConfig)
+        this.listNodeId.push(dcuConfig.id)
+        // this.setState({ listNode: this.listNode, listNodeId: this.listNodeId })
+      }
+      //node
+      for (let i = 0; i < this.state.numberNode; i++) {
+        nodes.push(<Node  name = 'ELEC' key={i} onMouseMove= {this.eventhandler} connect = {this.state.connectNode}  onClick= {this.eventClickNode}/>);
+      } 
+      //egde
+      for(let i = 0; i < this.state.edges.length; i++) {
+        edges.push(
+          <Delayed waitBeforeShow={100}>
+                <Line x0={this.state.edges[i].x1 +50} y0={this.state.edges[i].y1 +50} x1={this.state.edges[i].x2 +50} y1={this.state.edges[i].y2 +50} className = 'LineTo' > </Line>
+          </Delayed>
+        )
+      }
+      // solv
+      try {
+        for (let i = 0; i < this.state.connectNode.length; i++) {
+          let fromNode = this.state.connectNode[i]
+          if(this.state.connectNode[i].id !==undefined && this.state.solutionPreviousNode[i] !== undefined && this.state.connectNode[i].id !==  this.state.solutionPreviousNode[i]){
+            let toNode = this.getnodeById(this.state.solutionPreviousNode[i])
+            // if(this.dist(fromNode.x,fromNode.y,toNode.x,toNode.y) <= 300){
+              solv.push(<Delayed waitBeforeShow={2000}>
+                <Line x0={fromNode.x +50} y0={fromNode.y +50} x1={toNode.x +50} y1={toNode.y +50} className ='Solution' > 
+                </Line>
+              </Delayed>)
+            //}
+          }
+        }    
+      }
+      catch (e) {} 
+      // Ksp
+      try {
+        for(let i = 0; i < this.state.ksp.length ; i++) {
+          let z = i*9
+          let color = this.state.kspColor[i];
+          for(let j = 0; j < this.state.ksp[i].length; j++) {
+            if(this.dist(this.state.ksp[i][j].x1,this.state.ksp[i][j].y1,this.state.ksp[i][j].x2,this.state.ksp[i][j].y2) <= 300){
+            let pos = z 
+            if (i === 0){
+              pos = 4
+            }else if(i ===1){
+              pos = z
+             } else if (i === 2){
+               pos = -z +4
+             }
+              ksp.push(
+              <Delayed waitBeforeShow={100}>
+              <Line  className ='ksp' x0={this.state.ksp[i][j].x1 +48 + pos} y0={this.state.ksp[i][j].y1 +48 + pos} x1={this.state.ksp[i][j].x2 +48 + pos} y1={this.state.ksp[i][j].y2 +48 + pos} borderColor = {color}> </Line>
+              </Delayed>)
+            }
+          }
+        }
+      }
+      catch (e) {} 
+
+    return (
+      <div className="App">
+        <Container  fluid>
+          <Row>
+            <Col className="border border-dark border-4" md = {9} style = {{minHeight : 1500, margin :'0 auto'}}>
+              <Row className="graph_header">  
+                <Col md={5} style={{margin :'0 auto'}}>
+                  
+                    <Alert variant='secondary'>
+                    <Row>
+                      <Col ><Button variant = 'primary' onClick = {this.genNode}> Node Generator</Button></Col>
+                      <Col ><Button variant = 'danger' onClick = {this.eleminateNode}> Eliminate</Button></Col>
+                      <Col ><Button variant = 'warning' onClick = {this.reset}> Reset</Button></Col>
+                      <Col ><Button variant = 'success' onClick = {this.savegraph}> Save Graph</Button></Col>
+                      <h2 style={{marginTop: 10}}>{this.state.numberNode} Electric meters</h2>
+                      </Row>
+                      <hr/>
+                      <Row>
+                      <h2 style={{marginBottom: 10}}>Visualization</h2>
+                        <Col><Form.Check type="checkbox" label='Graph' defaultChecked={this.state.v_graph} onChange={this.handleVgraph}/></Col>
+                        <Col><Form.Check type="checkbox" label="Dijktra" defaultChecked={this.state.v_dijktra} onChange={this.handleVdijktra}/></Col>
+                        <Col><Form.Check type="checkbox" label="K shortest path" defaultChecked={this.state.v_ksp} onChange={this.handleVksp}/></Col>    
+                      </Row>
+                    </Alert>
+                </Col>
+              </Row>
+              <Row className="graph">
+                <Col md = {12}>
+                { 
+                dcu
+                }
+                {this.state.v_nodes?nodes: <span/>
+                }
+                {this.state.v_graph?edges: <span/>
+                }
+                {
+                this.state.v_dijktra?solv: <span/>
+                }
+                {
+                 this.state.v_ksp? ksp: <span/>
+                }
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    );
+  }
+  /*Render Component*/
   resetList (){
     this.listEdge = []
   }
@@ -215,9 +359,6 @@ export default class App extends Component <any,any>
     }
     catch (e) {}
   }
-  componentDidMount() {
-    //  this. linedraw(247,400,100,200);
-  }
   genNode = () => {
     this.setState({numberNode : this.state.numberNode +1})
   }
@@ -239,118 +380,35 @@ export default class App extends Component <any,any>
     }
     return node
   }
-  static renderEdgeList(listEdge:any) {
-    return (
-          <div className ="line">
-          {listEdge.map((listEdge: { x1: number, y1: number; x2: number; y2: number}) =>
-             <Delayed waitBeforeShow={100}>
-                <Line x0={listEdge.x1 +50} y0={listEdge.y1 +50} x1={listEdge.x2 +50} y1={listEdge.y2 +50} className = 'LineTo' > </Line>
-             </Delayed>
-            )}
-          </div>
-   );
-  }  
-    render(){
-      var indents = [];
-      var solv = [];   
-      var ksp = [];
-      var edges = [];
-      //DCU
-      var DCU = < Node  name = 'DCU' onMouseMove= {this.eventhandler} x = {900} y = {180}/>
-      
-      //node
-      for (let i = 0; i < this.state.numberNode; i++) {
-        indents.push(<Node  name = 'ELEC' key={i} onMouseMove= {this.eventhandler} connect = {this.state.connectNode}  onClick= {this.eventClickNode}/>);
-      } 
-      //egde
-      for(let i = 0; i < this.state.edges.length; i++) {
-        edges.push(
-          <Delayed waitBeforeShow={100}>
-                <Line x0={this.state.edges[i].x1 +50} y0={this.state.edges[i].y1 +50} x1={this.state.edges[i].x2 +50} y1={this.state.edges[i].y2 +50} className = 'LineTo' > </Line>
-          </Delayed>
-        )
-      }
-      // solv
-      try {
-        for (let i = 0; i < this.state.connectNode.length; i++) {
-          let fromNode = this.state.connectNode[i]
-          if(this.state.connectNode[i].id !==undefined && this.state.solutionPreviousNode[i] !== undefined && this.state.connectNode[i].id !==  this.state.solutionPreviousNode[i]){
-            let toNode = this.getnodeById(this.state.solutionPreviousNode[i])
-            if(this.dist(fromNode.x,fromNode.y,toNode.x,toNode.y) <= 300){
-              solv.push(<Delayed waitBeforeShow={2000}>
-                <Line x0={fromNode.x +50} y0={fromNode.y +50} x1={toNode.x +50} y1={toNode.y +50} className ='Solution' > 
-                </Line>
-              </Delayed>)
-            }
-          }
-        }    
-      }
-      catch (e) {} 
-      // Ksp
-      try {
-        for(let i = 0; i < this.state.ksp.length ; i++) {
-          let color = randomColor();
-          for(let j = 0; j < this.state.ksp[i].length; j++) {
-            if(this.dist(this.state.ksp[i][j].x1,this.state.ksp[i][j].y1,this.state.ksp[i][j].x2,this.state.ksp[i][j].y2) <= 300){
-            ksp.push(
-              <Delayed waitBeforeShow={100}>
-              <Line  className ='ksp' x0={this.state.ksp[i][j].x1 +50} y0={this.state.ksp[i][j].y1 +50} x1={this.state.ksp[i][j].x2 +50} y1={this.state.ksp[i][j].y2 +50} borderColor = {color}> </Line>
-              </Delayed>)
-            }
-          }
-        }
-      }
-      catch (e) {} 
-
-    return (
-      <div className="App">
-        <Container  fluid>
-          <Row>
-            <Col className="border border-dark border-4" md = {9} style = {{minHeight : 1500, margin :'0 auto'}}>
-              <Row className="graph_header">  
-                <Col md={5} style={{margin :'0 auto'}}>
-                  
-                    <Alert variant='secondary'>
-                    <Row>
-                      <Col ><Button variant = 'primary' onClick = {this.genNode}> Node Generator</Button></Col>
-                      <Col ><Button variant = 'danger' onClick = {this.eleminateNode}> Elemination</Button></Col>
-                      <Col ><Button variant = 'success' onClick = {this.savegraph}> Save Graph</Button></Col>
-                      <h2 style={{marginTop: 10}}>{this.state.numberNode} Electric meters</h2>
-                      </Row>
-                    </Alert>
-                </Col>
-              </Row>
-              <Row className="graph">
-                <Col md = {12}>
-                { DCU}
-                {
-                indents
-                }
-                { 
-                edges
-                }
-                {
-                solv
-                }
-                {
-                  ksp
-                }
-                </Col>
-              </Row>
-            </Col>
-            {/* <Col md = {4} className="border border-dark border-2">
-              <Row className ='treeHeader'>
-              <Alert variant='secondary' style = {{paddingBottom : 66}}>
-              <h2 style={{marginTop: 10}}>Tree</h2>
-              </Alert>
-              </Row>
-              <Row className ='tree'>
-                <p></p>
-              </Row>
-            </Col> */}
-          </Row>
-        </Container>
-      </div>
-    );
+  reset = () => {
+    this.listNode = []
+    this.listNodeId = []
+    this.listEdge  = []
+    this.setState({edges  : [],
+      numberNode : 0,
+      listNodeId : [],
+      listNode : [],
+      solutionPreviousNode: [],
+      connectNode : [],
+      ksp : [],
+      kspColor : '',
+      v_graph : false,
+      v_nodes : false,
+      v_dijktra: false,
+      v_ksp : false,
+    })
   }
+  changeColor(){
+    setInterval(() => {
+      const tempColor : string[] = [];
+      for(let i = 0; i < 5; i++){
+        tempColor.push(randomColor({
+          luminosity: 'bright'
+       }))
+        }
+        this.setState({kspColor: tempColor})
+    }, 1500)
+  }
+  /* End of Render Component*/
 }
+

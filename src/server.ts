@@ -1,5 +1,5 @@
 import express from 'express';
-import { Main } from './process';
+import { Main, KshortestPath } from './process';
 // var apiResponse = require('express-api-response');
 // rest of the code remains same
 const bodyParser = require("body-parser");
@@ -16,16 +16,17 @@ app.get('/api/test', (req, res) => {
 //   console.log(req.body.firstName);
 //   res.send(req)
 // })
-app.post('/api/graph',(req, res) => {
+app.post('/api/graph', (req, res) => {
   // console.log(req.body.firstName);
    const solution =  Main(req.body.Adjentlist,req.body.NodeList)
   res.json({solution : solution  , message :"Send Graph Success ******"})
-    
-  // res.json({Adjentlist : req.body.Adjentlist, NodeList : req.body.NodeList})
-  // res.send('Send Graph Success ******')
-  //  const json =Object.assign({}, solution);;
-  // console.log(solution)
 })
+app.post('/api/ksp',async (req, res) => {
+  // console.log(req.body.firstName);
+   const ksp = await KshortestPath( req.body.targetNode)
+  res.json({solv : ksp  , message :""})
+})
+
 app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`);
 });

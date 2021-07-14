@@ -4,10 +4,8 @@ import { graphProccess} from './../../graph/Graph_Proccess/G_processor';
 import delVertex = graphProccess.delVertex
 import delEdge = graphProccess.delEdge
 import CloneGraph = graphProccess.CloneGraph
-import getGraph = graphProccess.getGraph
 
 export async function YenAlgro(SourceGraph: Graph, StaticGraph: Graph,  source : number , sink : number, K : number, NodeIdList: string[]) {
-    console.log('K shortest Path from  ' +source + ' to ' + sink )
     let dijktra_rerouting: A_dijkstra = new A_dijkstra(NodeIdList);
     let reRoutingGraph: Graph = SourceGraph
     const A = []
@@ -60,6 +58,16 @@ export async function YenAlgro(SourceGraph: Graph, StaticGraph: Graph,  source :
         A[k] = potentialKpath[0]
         potentialKpath.shift()
     }
-    console.log(A)
-    return A
+    const results : any[] = []
+    if(A.length >= 4){
+        A.pop()
+    }
+    for(let i = 0; i < A.length; i++){
+        if(A[i].length == 2 && A[i][0] == A[i][1]){
+            continue
+        } else {
+            results.push(A[i])
+        }
+    }
+    return results
 }

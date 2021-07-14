@@ -8,42 +8,52 @@ import {YenAlgro} from './C_router/A_shortest_path/YenKSP'
 import {graphProccess} from './graph/Graph_Proccess/G_processor'
 import initializeGraph = graphProccess.initializeGraph
 import baseGraph = graphProccess.baseGraph
+import getGraph = graphProccess.getGraph
+import CloneGraph = graphProccess.CloneGraph
 import { C_DCU } from "./dcu/C_DCU";
 import { C_PacketProcessor } from "./dcu/C_PacketProcessor";
 import E_Packet = Packet.E_Packet;
+ 
+let G_adjentList : IclientPacket[] 
+let G_nodeList : Inode[]
 
-
-export  function Main(Adjentlist : IclientPacket[] , NodeList : Inode[]) {
-    const processor: C_GraphProcessor = new C_GraphProcessor();
+export function init(Adjentlist : IclientPacket[] , NodeList : Inode[]){
     const graph: Graph = new Graph();
-    const StaticGraph: Graph = new Graph(); 
+    const StaticGraph: Graph = new Graph();
     const base_graph =  baseGraph (Adjentlist, NodeList)
-    const childNodeList: C_Node[] = [];
-    const numChildNodes = NodeList.length - 1;
-
-        /*I. Init and solve the graph*/
+    NodeIdList = base_graph.NodeIdList
     initializeGraph(graph, base_graph.vertexlist, base_graph.weight);
     initializeGraph(StaticGraph, base_graph.vertexlist, base_graph.weight);
-    // processor.getGraph(graph)
-    const dijktra: A_dijkstra = new A_dijkstra(base_graph.NodeIdList);
+    return { graph, StaticGraph,base_graph}
+}
+
+let NodeIdList: string[] = [];
+export  function Main(Adjentlist : IclientPacket[] , NodeList : Inode[]) {
+    /*I. Init and solve the graph*/
+    G_adjentList = Adjentlist
+    G_nodeList = NodeList
+    const Init =  init(G_adjentList, G_nodeList)
+    const childNodeList: C_Node[] = [];
+    const numChildNodes = NodeList.length - 1;
+    const dijktra: A_dijkstra = new A_dijkstra(Init.base_graph.NodeIdList);
     const soureceNode = 0
-    dijktra.findShortestPath(graph, soureceNode);
-    dijktra.displaySolution(graph);
-    const levels = dijktra.setLevel(graph);
+    dijktra.findShortestPath(Init.graph, soureceNode);
+    dijktra.displaySolution(Init.graph);
+    const levels = dijktra.setLevel(Init.graph);
 
 
     console.log('[')
     for (let i = 0; i < levels.length; i++) {
-        console.log ('{node '+ levels[i].node +' :' +base_graph.NodeIdList[levels[i].node] +', levelID: { level:'+levels[i].levelID.level+ ', id:'+levels[i].levelID.id+'}}')
+        console.log ('{node '+ levels[i].node +' :' +Init.base_graph.NodeIdList[levels[i].node] +', levelID: { level:'+levels[i].levelID.level+ ', id:'+levels[i].levelID.id+'}}')
     }
     console.log(']')
     // processor.getGraph(graph)
-    console.log(base_graph.NodeIdList)
-    // YenAlgro(graph,StaticGraph,0,12,3,base_graph.NodeIdList)
+    // console.log(base_graph.NodeIdList)
+    // 
 
         /** II. Initiate DCU: */
     const offlineList = [1,2,6];
-    const nodeList =  dijktra.getGraphnode(graph)
+    const nodeList =  dijktra.getGraphnode(Init.graph)
 
     for (let i = 0; i < offlineList.length; i++){
         for (let j = 0; j < nodeList.length ; j ++){
@@ -84,10 +94,17 @@ export  function Main(Adjentlist : IclientPacket[] , NodeList : Inode[]) {
     // // dijktra.displaySolution(graph)
     // const a_star: A_aStrar = new A_aStrar();
     // a_star.findShortestPath(graph,0, 4)
-    const  data = dijktra.getPreviousByELecID(graph)
+    const  data = dijktra.getPreviousByELecID(Init.graph)
     const json =Object.assign({}, data);
-    console.log(json)
     return json 
+}
+export async function KshortestPath(TargetNode : string){
+    const Init =  init(G_adjentList, G_nodeList)
+    if( NodeIdList.length > 0 ){
+        const KSP  = await YenAlgro(CloneGraph(Init.graph),CloneGraph(Init.StaticGraph),0,NodeIdList.indexOf(TargetNode),3,NodeIdList)
+        const KshortestPath = Object.assign({}, KSP)
+        return KshortestPath
+    } else return []
 }
 // export  function sort_adj  (Adjentlist : IclientPacket[], nodeindex : number[]){
 //     let list :IclientPacket[] = []

@@ -72,10 +72,14 @@
 }
 
 .ksp {
+  -webkit-transition: border-top-color 0.5s ease-out;
+  -moz-transition: border-top-color 0.5s ease-out;
+  -o-transition: border-top-color 0.5s ease-out;
+  transition: border-top-color 0.5s ease-out;
   animation:ksp 1s;
   animation-fill-mode: forwards;
 }
 @keyframes ksp {
 
-  100% {border-top-width: 7px;}
+  100% {border-top-width: 8px;border-top-style:solid;}
 }
