@@ -111,6 +111,9 @@ export default class App extends Component <any,any>
   }
   handleVksp = event => {
     this.setState({v_ksp: !this.state.v_ksp});
+    if(this.state.v_ksp === false){
+      this.setState({ksp:[]})
+    }
   }
   /* End of event handlers*/
   render(){
@@ -165,7 +168,7 @@ export default class App extends Component <any,any>
           let z = i*9
           let color = this.state.kspColor[i];
           for(let j = 0; j < this.state.ksp[i].length; j++) {
-            if(this.dist(this.state.ksp[i][j].x1,this.state.ksp[i][j].y1,this.state.ksp[i][j].x2,this.state.ksp[i][j].y2) <= 300){
+            // if(this.dist(this.state.ksp[i][j].x1,this.state.ksp[i][j].y1,this.state.ksp[i][j].x2,this.state.ksp[i][j].y2) <= 300){
             let pos = z 
             if (i === 0){
               pos = 4
@@ -178,7 +181,7 @@ export default class App extends Component <any,any>
               <Delayed waitBeforeShow={100}>
               <Line  className ='ksp' x0={this.state.ksp[i][j].x1 +48 + pos} y0={this.state.ksp[i][j].y1 +48 + pos} x1={this.state.ksp[i][j].x2 +48 + pos} y1={this.state.ksp[i][j].y2 +48 + pos} borderColor = {color}> </Line>
               </Delayed>)
-            }
+            //}
           }
         }
       }
@@ -393,7 +396,6 @@ export default class App extends Component <any,any>
       ksp : [],
       kspColor : '',
       v_graph : false,
-      v_nodes : false,
       v_dijktra: false,
       v_ksp : false,
     })
