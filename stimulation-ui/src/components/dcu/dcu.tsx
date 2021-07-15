@@ -29,7 +29,7 @@ export class DCU extends Component <any,any> {
     if(this.props.name ==='DCU'){
      id = this.props.id
      return (
-      <div id={this.props.id} className="mydiv" style={{top: this.props.y, left: this.props.x}} onMouseMove = {this.handleChange}>
+      <div id={this.props.id} className="mydiv" style={{top: this.props.y, left: this.props.x}} onMouseMove = {this.handleChange} onClick ={this.handleClick}>
         <svg id="Layer_1" height="90" viewBox="0 0 512 512" width="90" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1">
         <path d="m42 19v445h390v-445z" fill="#b3d1e7"/><path d="m402.17 193.82h84.7v119.36h-84.7z" fill="#d4e1f4"/>
         <path d="m197.85 36.53h77.83v28.24h-77.83z" fill="#fb6771"/><path d="m94.67 84.25h284.2v347.16h-284.2z" fill="#4a5160"/>

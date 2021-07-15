@@ -43,28 +43,39 @@ export default class App extends Component <any,any>
   }
   /* Event handlers*/
   eventClickNode = (node) => {
+    if(this.state.v_ksp){
     const temp : any[] = []
     const node_show : any[] = []
-    const tempshow  = []
     for(let i = 0; i < Object.keys(node).length; i++) {
       const tempKsp : any[] = []
       for( let k = 0 ; k <node[i].length -1; k++ ) {
         for (let j = 0; j < this.state.connectNode.length; j++) {
           if(node[i][k] === j){
-            tempshow.push(this.state.connectNode[node[i][k]].id)
-            tempKsp.push({x1:this.state.connectNode[node[i][k]].x,
-                          y1: this.state.connectNode[node[i][k]].y,
-                          x2:this.state.connectNode[node[i][k+1]].x,
-                          y2: this.state.connectNode[node[i][k+1]].y
+            tempKsp.push({
+              x1:this.state.connectNode[node[i][k]].x,
+              y1: this.state.connectNode[node[i][k]].y,
+              x2:this.state.connectNode[node[i][k+1]].x,
+              y2: this.state.connectNode[node[i][k+1]].y
             })
           }
         }
       }
       temp.push(tempKsp)
+    }
+    for(let i = 0; i < Object.keys(node).length; i++){
+      let tempshow  = []
+      for(let j = 0 ; j <node[i].length; j++) {
+        for (let k = 0 ; k <this.state.connectNode.length; k++ ){
+          if(node[i][j] === k){
+            tempshow.push(this.state.connectNode[k].id)
+          }  
+        }
+      }
       node_show.push(tempshow)
     }
-    console.log(node)
+    console.log( node_show)
     this.setState({ksp: temp})
+    }
     this.savegraph()
   }
   eventhandler = data => {
@@ -126,7 +137,7 @@ export default class App extends Component <any,any>
         y : 290,
         name : 'DCU'
       };
-      var dcu = < DCU id ={dcuConfig.id}  name = {dcuConfig.name} onMouseMove= {this.eventhandler} x = {dcuConfig.x} y = {dcuConfig.y}/>
+      var dcu = < DCU id ={dcuConfig.id}  name = {dcuConfig.name} onMouseMove= {this.eventhandler} connect = {this.state.connectNode} x = {dcuConfig.x} y = {dcuConfig.y} onClick= {this.eventClickNode}/>
       if(this.listNode.length === 0) {
         this.listNode.push(dcuConfig)
         this.listNodeId.push(dcuConfig.id)
@@ -257,7 +268,7 @@ export default class App extends Component <any,any>
           distance :dist
         } 
         if(edge.x1 !== undefined && edge.y1 !== undefined && edge.x2 !== undefined && edge.y2 !== undefined) {
-          if(this.dist(edge.x1,edge.y1,edge.x2,edge.y2) <= 280){
+          if(this.dist(edge.x1,edge.y1,edge.x2,edge.y2) <= 240){
             this.listEdge.push(edge)
           }
         }

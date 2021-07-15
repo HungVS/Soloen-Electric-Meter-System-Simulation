@@ -15,7 +15,6 @@ export async function YenAlgro(SourceGraph: Graph, StaticGraph: Graph,  source :
     }
     A [0] = dijktra_rerouting.getShortestPath(SourceGraph,source, sink)
     const potentialKpath = []; 
-    const delVertexList : number [] = []
     for (let k = 1; k <= K; k ++) {
         for (let i = 0; i < A[k-1].length -2; i++) {
             const spurNode =  A[k-1][i]
@@ -59,9 +58,9 @@ export async function YenAlgro(SourceGraph: Graph, StaticGraph: Graph,  source :
         potentialKpath.shift()
     }
     const results : any[] = []
-    if(A.length >= 4){
-        A.pop()
-    }
+    // if(A.length >= 4){
+    //     A.pop()
+    // }
     for(let i = 0; i < A.length; i++){
         if(A[i].length == 2 && A[i][0] == A[i][1]){
             continue
@@ -69,5 +68,6 @@ export async function YenAlgro(SourceGraph: Graph, StaticGraph: Graph,  source :
             results.push(A[i])
         }
     }
+    console.log(A)
     return results
 }
